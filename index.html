@@ -3,112 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lahi Earn Pro | Official</title>
+    <title>Lahi Earn Pro | Admin Control</title>
     <script src="https://adsgram.ai/sdk-v1.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --admin-gold: #d4af37; --admin-bg: #050505; --card-bg: #111; --text-color: #e0e0e0; }
+        :root { --gold: #d4af37; --bg: #050505; --card: #111111; --text: #ffffff; }
         
         body { 
-            font-family: 'Poppins', sans-serif; background: var(--admin-bg); color: var(--text-color); 
-            margin: 0; padding: 0; overflow-x: hidden;
+            font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); 
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Splash Screen Animation */
+        /* Startup Screen */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 10000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
+            background: #000; z-index: 10000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
         }
-        .logo-text {
-            font-size: 28px; font-weight: 800; color: var(--admin-gold);
-            letter-spacing: 5px; animation: fadePulse 1.5s infinite;
+        .logo-anim {
+            font-size: 30px; font-weight: 800; color: var(--gold);
+            letter-spacing: 4px; animation: pulse 2s infinite;
         }
-        @keyframes fadePulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1); } }
 
-        /* Container & Cards */
-        .container { max-width: 500px; margin: auto; padding: 20px; display: none; animation: fadeIn 1s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Main Container */
+        .container { width: 100%; max-width: 480px; padding: 20px; display: none; box-sizing: border-box; }
 
-        .card { 
-            background: var(--card-bg); padding: 20px; border-radius: 15px; 
-            border: 1px solid #222; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .admin-btn { background: none; border: 1px solid #222; color: #444; padding: 5px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; }
+
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { 
+            background: var(--card); padding: 20px; border-radius: 20px; text-align: center;
+            border: 1px solid #222; border-bottom: 3px solid var(--gold);
         }
+        .stat-card h4 { margin: 0; font-size: 11px; color: #888; text-transform: uppercase; }
+        .stat-card p { margin: 8px 0 0; font-size: 22px; font-weight: 800; color: var(--gold); }
 
-        .stat-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-item { background: #1a1a1a; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 2px solid var(--admin-gold); }
-        .stat-item h4 { margin: 0; font-size: 11px; color: #888; text-transform: uppercase; }
-        .stat-item p { margin: 5px 0 0; font-size: 18px; font-weight: 800; color: var(--admin-gold); }
-
+        /* Action Buttons */
+        .action-card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; }
         .btn { 
-            width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 600;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-bottom: 10px;
+            width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: 700;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-bottom: 12px;
         }
-        .btn-gold { background: var(--admin-gold); color: black; }
-        .btn-dark { background: #1a1a1a; color: white; border: 1px solid #333; }
+        .btn-gold { background: var(--gold); color: #000; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2); }
+        .btn-outline { background: transparent; color: #fff; border: 1px solid #333; }
+        .btn-withdraw { background: #1b5e20; color: #fff; border-radius: 50px; margin-top: 10px; }
 
-        #adminPanel { display: none; padding: 20px; background: #000; min-height: 100vh; }
+        /* Admin Panel Overlay */
+        #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; padding: 30px; box-sizing: border-box; }
     </style>
 </head>
 <body onload="initApp()">
 
 <div id="splash">
-    <div class="logo-text">LAHI EARN PRO</div>
-    <p style="font-size: 10px; color: #555; margin-top: 10px;">PREPARING SECURE ENVIRONMENT...</p>
+    <div class="logo-anim">LAHI EARN PRO</div>
+    <div style="font-size: 10px; color: #333; margin-top: 15px;">SECURED BY ADMIN GATEWAY</div>
 </div>
 
-<div id="userView" class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="color: var(--admin-gold); margin: 0; font-size: 20px;">DASHBOARD</h2>
-        <button onclick="checkAdmin()" style="background:none; border:none; color:#333; font-size:10px;">ADMIN ACCESS</button>
+<div class="container" id="mainApp">
+    <div class="header">
+        <h2 style="margin:0; font-size: 18px; letter-spacing: 1px;">DASHBOARD</h2>
+        <button class="admin-btn" onclick="openAdmin()">ADMIN ACCESS</button>
     </div>
 
-    <div class="card">
-        <div class="stat-box">
-            <div class="stat-item">
-                <h4>MEMBERS JOINED</h4>
-                <p id="totalUsers">0</p> </div>
-            <div class="stat-item">
-                <h4>MY BALANCE</h4>
-                <p id="userBalance">0</p>
-            </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Active Users</h4>
+            <p id="totalUsers">0</p>
+        </div>
+        <div class="stat-card">
+            <h4>My Points</h4>
+            <p id="userBalance">0</p>
         </div>
     </div>
 
-    <div class="card">
-        <h4 style="margin-top: 0; font-size: 14px; color: var(--admin-gold);">ACTIVE TASKS</h4>
-        <button class="btn btn-gold" onclick="showAd()">📺 WATCH VIDEO AD (+80)</button>
-        <button class="btn btn-dark" onclick="window.open('https://youtube.com/@hiruwaofficial-b2i')">🔴 YOUTUBE SUBSCRIBE (+50)</button>
+    <div class="action-card">
+        <p style="font-size: 12px; color: var(--gold); margin-top: 0;">AVAILABLE TASKS</p>
+        <button class="btn btn-gold" onclick="showAd()">📺 Premium Video Ad (+80)</button>
+        <button class="btn btn-outline" onclick="window.open('https://youtube.com/@hiruwaofficial-b2i')">🔴 YouTube Task (+50)</button>
     </div>
 
-    <button class="btn btn-gold" style="border-radius: 50px; margin-top: 20px;" onclick="openWithdraw()">💰 WITHDRAWAL REQUEST</button>
+    <button class="btn btn-withdraw" onclick="requestWithdraw()">💰 Request Withdrawal</button>
+    
+    <p style="font-size: 10px; color: #333; text-align: center; margin-top: 30px;">Version 2.0.1 (Admin Mode Enabled)</p>
 </div>
 
-<div id="adminPanel" class="container">
-    <h2 style="color: var(--admin-gold);">ADMIN SUITE</h2>
-    <div class="card">
-        <p>Commission Earnt: <span id="adminComm">0</span> Pts</p>
-        <p>Pending Tasks: <span style="color: var(--admin-gold);">0</span></p>
+<div id="adminPanel">
+    <h2 style="color: var(--gold); border-bottom: 1px solid #222; padding-bottom: 10px;">ADMIN SUITE</h2>
+    <div class="stat-card" style="margin-bottom: 20px;">
+        <h4>System Commission</h4>
+        <p id="adminPoints">0</p>
     </div>
-    <button class="btn btn-dark" onclick="location.reload()">EXIT ADMIN MODE</button>
+    <div style="background: #111; padding: 15px; border-radius: 10px; font-size: 13px;">
+        <p>• Total Registrations: <span style="color: var(--gold);">0</span></p>
+        <p>• Pending Approvals: <span style="color: var(--gold);">0</span></p>
+    </div>
+    <button class="btn btn-outline" style="margin-top: 30px;" onclick="closeAdmin()">Exit Admin Mode</button>
 </div>
 
 <script>
     let points = parseInt(localStorage.getItem('lahiPoints')) || 0;
+    let adminPoints = parseInt(localStorage.getItem('lahiAdminPoints')) || 0;
+    
     const BOT_TOKEN = "8707763491:AAE8b44xX4lI_k_nhjN-DwbYAfYB8S9ntWg";
     const ADMIN_CHAT_ID = "8193830513";
     let AdController;
 
     function initApp() {
-        // අලුත් User කෙනෙක් ආවම Admin ට Notification එකක් යනවා
-        if (!localStorage.getItem('userRegistered')) {
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=🚀 New User Joined Lahi Earn Pro!`);
-            localStorage.setItem('userRegistered', 'true');
+        // प्रथम युजर रजिस्टर नोटिफिकेशन
+        if (!localStorage.getItem('isNewUser')) {
+            sendTelegram("🚀 New User Joined Lahi Earn Pro!");
+            localStorage.setItem('isNewUser', 'done');
         }
 
         setTimeout(() => {
             document.getElementById('splash').style.display = 'none';
-            document.getElementById('userView').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'block';
             updateUI();
         }, 3000);
 
@@ -117,49 +129,61 @@
         }
     }
 
-    function updateUI() {
-        document.getElementById('userBalance').innerText = points.toLocaleString();
-        // මෙතන අගය 0 ලෙසම තබා ඇත. ඔබට පසුව මෙය වෙනස් කළ හැක.
-        document.getElementById('totalUsers').innerText = "0"; 
-    }
-
     function showAd() {
         if (AdController) {
             AdController.show().then(() => {
                 points += 80;
-                localStorage.setItem('lahiPoints', points);
-                updateUI();
-                // Admin Commission Alert
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=💰 Commission Received: 20 Points`);
-            }).catch(() => alert("Ad not ready yet!"));
+                adminPoints += 20;
+                saveData();
+                sendTelegram("💰 Commission Earned: 20 Points");
+                alert("Success! 80 Points added to your wallet.");
+            });
         }
     }
 
-    function openWithdraw() {
+    function requestWithdraw() {
         if (points < 4000) {
-            alert("අවම ලකුණු 4000ක් අවශ්‍යයි!");
+            alert("Minimum 4000 points required!");
             return;
         }
-        let method = prompt("Method (Binance, EzCash, mCash, Reload):");
-        let details = prompt("Account No / Phone No:");
+        let method = prompt("Choose Method (Binance, EzCash, mCash, Reload):");
+        let details = prompt("Enter Account Details:");
         if (method && details) {
-            const msg = `🔔 *WITHDRAW REQUEST*\nMethod: ${method}\nDetails: ${details}\nPoints: ${points}`;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-            alert("Request Sent! Admin will check and approve.");
+            const msg = `🔔 *WITHDRAWAL REQUEST*\nMethod: ${method}\nDetails: ${details}\nPoints: ${points}\nStatus: PENDING APPROVAL`;
+            sendTelegram(msg);
+            alert("Request sent to Admin. Please wait for approval.");
             points = 0;
-            localStorage.setItem('lahiPoints', points);
-            updateUI();
+            saveData();
         }
     }
 
-    function checkAdmin() {
-        let pass = prompt("Admin Password:");
+    function openAdmin() {
+        let pass = prompt("Enter Admin Password:");
         if (pass === "ADMIN789") {
-            document.getElementById('userView').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminPoints').innerText = adminPoints;
         } else {
-            alert("Wrong Password!");
+            alert("Unauthorized!");
         }
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminPanel').style.display = 'none';
+    }
+
+    function saveData() {
+        localStorage.setItem('lahiPoints', points);
+        localStorage.setItem('lahiAdminPoints', adminPoints);
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('userBalance').innerText = points.toLocaleString();
+        document.getElementById('totalUsers').innerText = "0"; // युजर काउंट ० ठेवला आहे
+    }
+
+    function sendTelegram(text) {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
     }
 </script>
 
