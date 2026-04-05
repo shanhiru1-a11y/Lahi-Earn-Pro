@@ -7,7 +7,7 @@
     <script src="https://adsgram.ai/sdk-v1.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f1c40f; --secondary: #0088cc; --bg: #0f172a; --card: #1e293b; --accent: #e74c3c; --selected: #2ecc71; }
+        :root { --primary: #f1c40f; --secondary: #0088cc; --bg: #0f172a; --card: #1e293b; --accent: #e74c3c; --selected: #2ecc71; --admin: #8e44ad; }
         
         body { 
             font-family: 'Poppins', sans-serif; 
@@ -20,79 +20,96 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 10000; display: flex; justify-content: center; align-items: center;
         }
-        .logo-anim { font-size: 35px; font-weight: 800; color: var(--primary); letter-spacing: 5px; animation: pulse 1.5s infinite; }
+        .logo-anim { font-size: 30px; font-weight: 800; color: var(--primary); letter-spacing: 3px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } }
 
-        .container { padding: 20px; max-width: 450px; margin: auto; display: none; animation: fadeIn 1s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .container { padding: 20px; max-width: 450px; margin: auto; display: none; animation: fadeIn 0.8s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .balance-card { 
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 30px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 25px; border-radius: 25px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        #balance { font-size: 55px; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px rgba(241, 196, 15, 0.5); }
+        #balance { font-size: 50px; font-weight: 800; color: var(--primary); }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .btn { 
-            background: var(--card); color: white; border: none; padding: 18px 5px; border-radius: 20px; 
-            font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s;
-            border-bottom: 5px solid rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: var(--card); color: white; border: none; padding: 15px 5px; border-radius: 18px; 
+            font-weight: 600; cursor: pointer; transition: 0.2s; border-bottom: 4px solid rgba(0,0,0,0.3);
         }
-        .btn:active { transform: scale(0.95); border-bottom: none; }
-        .btn-full { grid-column: span 2; background: linear-gradient(90deg, #0088cc, #00aaff); font-size: 16px; }
+        .btn:active { transform: scale(0.98); border-bottom: none; }
+        .btn-full { grid-column: span 2; background: linear-gradient(90deg, #0088cc, #00aaff); }
 
-        /* Method Selection Buttons */
-        .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .method-btn { 
-            background: #0f172a; border: 1px solid #475569; color: white; padding: 10px; 
-            border-radius: 12px; font-size: 12px; cursor: pointer; transition: 0.3s;
-        }
-        .method-btn.active { border-color: var(--selected); background: rgba(46, 204, 113, 0.2); color: var(--selected); }
+        /* Admin UI Specific */
+        .admin-panel { display: none; background: #0f172a; min-height: 100vh; padding: 20px; text-align: left; }
+        .admin-stat-card { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--admin); }
 
-        .modal { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 85%; background: #1e293b; padding: 25px; border-radius: 30px; z-index: 1001; border: 2px solid var(--primary);
-        }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; backdrop-filter: blur(5px); }
+        .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .method-btn { background: #0f172a; border: 1px solid #475569; color: white; padding: 10px; border-radius: 12px; cursor: pointer; font-size: 11px; }
+        .method-btn.active { border-color: var(--selected); background: rgba(46, 204, 113, 0.1); }
 
-        input { width: 95%; padding: 12px; margin: 8px 0; border-radius: 15px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1e293b; padding: 20px; border-radius: 25px; z-index: 1001; border: 1px solid var(--primary); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
+        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #475569; background: #0f172a; color: white; }
     </style>
 </head>
 <body onload="initApp()">
 
 <div id="splash"><div class="logo-anim">LAHI EARN PRO</div></div>
 
-<div class="container" id="mainContent">
+<div class="container" id="userInterface">
     <div style="display:flex; justify-content: space-between; align-items:center;">
-        <h2 style="letter-spacing: 2px; color: var(--primary); margin:0;">LAHI EARN PRO</h2>
-        <button onclick="adminLogin()" style="background:none; border:none; color:#334155; font-size:10px;">ADMIN</button>
+        <h3 style="color: var(--primary); margin:0;">LAHI EARN PRO</h3>
+        <button onclick="adminLogin()" style="background:none; border:none; color:#475569; font-size:12px;">🛡️ ADMIN</button>
     </div>
     
-    <p style="font-size:12px; color:gray; margin-top:10px;">👥 Active Users: <span id="userCount">0</span></p>
-
     <div class="balance-card">
-        <p style="margin:0; opacity:0.6; font-size: 14px;">AVAILABLE POINTS</p>
+        <p style="margin:0; opacity:0.6; font-size: 13px;">MY BALANCE</p>
         <div id="balance">0</div>
     </div>
 
     <div class="grid">
-        <button class="btn btn-full" onclick="showAd()">📺 WATCH VIDEO AD <span style="font-size:10px; opacity:0.8;">(+80 Points)</span></button>
-        <button class="btn btn-full" style="background: linear-gradient(90deg, #c4302b, #ff4444);" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE <span style="font-size:10px; opacity:0.8;">(+50 Points)</span></button>
+        <button class="btn btn-full" onclick="showAd()">📺 WATCH ADS <span style="font-size:10px;">(+100 Points)</span></button>
+        <button class="btn btn-full" style="background: #c4302b;" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE</button>
         <button class="btn" style="background: #e67e22;" onclick="openModal('lbModal')">🏆 RANKING</button>
-        <button class="btn" style="background: #8e44ad;" onclick="openModal('refModal')">👥 FRIENDS</button>
-        <button class="btn btn-full" style="background: linear-gradient(90deg, #27ae60, #2ecc71);" onclick="openModal('withdrawModal')">💰 WITHDRAW ALL MONEY</button>
+        <button class="btn" style="background: #8e44ad;" onclick="openModal('refModal')">👥 REFERRAL</button>
+        <button class="btn btn-full" style="background: #27ae60;" onclick="openModal('withdrawModal')">💰 WITHDRAW (LIMIT: 4000)</button>
     </div>
+</div>
+
+<div class="admin-panel" id="adminInterface">
+    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
+        <h2 style="color: var(--admin); margin:0;">ADMIN PANEL</h2>
+        <button onclick="location.reload()" style="background:var(--accent); border:none; color:white; padding:5px 10px; border-radius:10px;">LOGOUT</button>
+    </div>
+
+    <div class="admin-stat-card">
+        <small>Total Users</small>
+        <h3 id="adminUserCount" style="margin:5px 0;">1,248 Users</h3>
+    </div>
+
+    <div class="admin-stat-card">
+        <small>Pending Withdrawals</small>
+        <h3 style="margin:5px 0; color:var(--primary);">Needs Approval</h3>
+        <p style="font-size:11px; color:#94a3b8;">Check Telegram Bot for details</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <small>System Earnings (20%)</small>
+        <h3 style="margin:5px 0; color:var(--selected);">Active</h3>
+    </div>
+
+    <button class="btn btn-full" style="background:var(--admin); margin-top:20px;" onclick="alert('All user balances are stored in LocalStorage/Firebase')">VIEW USER LIST</button>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeModals()"></div>
 
 <div id="withdrawModal" class="modal">
-    <h3 style="color:var(--primary); margin-bottom: 15px;">Withdrawal Method</h3>
+    <h3 style="color:var(--primary);">Payment Method</h3>
     <div class="method-grid">
-        <button class="method-btn" onclick="selectMethod(this, 'Bank')">🏦 Bank Transfer</button>
+        <button class="method-btn" onclick="selectMethod(this, 'Bank')">🏦 Bank</button>
         <button class="method-btn" onclick="selectMethod(this, 'Binance')">🟡 Binance</button>
         <button class="method-btn" onclick="selectMethod(this, 'EzCash')">📱 EzCash</button>
         <button class="method-btn" onclick="selectMethod(this, 'mCash')">📱 mCash</button>
@@ -101,25 +118,23 @@
     
     <div id="withdrawInputs" style="display: none;">
         <input type="text" placeholder="Full Name" id="accName">
-        <div id="bankOnlyFields">
-            <input type="text" placeholder="Bank Name" id="bankName">
-            <input type="text" placeholder="Bank Branch" id="bankBranch">
+        <div id="bankOnlyFields" style="display:none;">
+            <input type="text" placeholder="Bank & Branch" id="bankDetails">
         </div>
-        <input type="text" placeholder="Account Number / Phone / ID" id="accNum">
-        <button class="btn btn-full" style="margin-top: 10px;" onclick="sendWithdrawRequest()">SUBMIT REQUEST</button>
+        <input type="text" placeholder="Account / Phone / Binance ID" id="accNum">
+        <button class="btn btn-full" style="margin-top: 10px; background: var(--selected);" onclick="sendWithdrawRequest()">SUBMIT FOR APPROVAL</button>
     </div>
-    <p id="minText" style="font-size:10px; color:grey; margin-top:10px;">Minimum withdraw: 4,000 Points</p>
 </div>
 
 <div id="lbModal" class="modal">
-    <h3 style="color:var(--primary)">Top Earners 🏆</h3>
-    <p>1. Lahiru (Admin) - 99,999</p>
+    <h3 style="color:var(--primary)">Top Earners</h3>
+    <p style="font-size:14px;">1. User_882 - 8,400<br>2. User_102 - 5,200</p>
     <button class="btn btn-full" onclick="closeModals()">CLOSE</button>
 </div>
 
 <div id="refModal" class="modal">
-    <h3 style="color:var(--primary)">Invite Friends 👥</h3>
-    <p>Invite friends and earn points!</p>
+    <h3 style="color:var(--primary)">Referral Bonus</h3>
+    <p style="font-size:13px;">New user registration: You get +50 Points!</p>
     <button class="btn btn-full" onclick="closeModals()">CLOSE</button>
 </div>
 
@@ -132,13 +147,34 @@
     function initApp() {
         setTimeout(() => {
             document.getElementById('splash').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-        }, 3000);
-        document.getElementById('balance').innerText = points.toLocaleString();
-        if (window.Adsgram) { window.AdController = window.Adsgram.init({ blockId: "26784" }); }
+            document.getElementById('userInterface').style.display = 'block';
+        }, 2500);
+        updateUI();
         if (!localStorage.getItem('registered')) {
-            sendToTelegram("🚀 New User Joined Lahi Earn Pro!");
+            sendToTelegram("🆕 Aluth user kenek register una! Oyata points labuna.");
             localStorage.setItem('registered', 'true');
+        }
+    }
+
+    function adminLogin() {
+        let pass = prompt("Admin Password eka gahanna:");
+        if (pass === "ADMIN789") {
+            document.getElementById('userInterface').style.display = 'none';
+            document.getElementById('adminInterface').style.display = 'block';
+        } else {
+            alert("Password waradi machan!");
+        }
+    }
+
+    function showAd() {
+        if (window.AdController) {
+            window.AdController.show().then(() => {
+                points += 100; // User ta 100i
+                savePoints();
+                sendToTelegram("✅ User kenek Ad ekak baluwa. Oyata 20% commission eka labuna!");
+            });
+        } else {
+            alert("Ads load wenne na machan. Poddak inna.");
         }
     }
 
@@ -147,75 +183,47 @@
         btn.classList.add('active');
         selectedMethod = method;
         document.getElementById('withdrawInputs').style.display = 'block';
-        document.getElementById('minText').style.display = 'none';
-
-        // බැංකු ක්‍රමය නම් වැඩිපුර තොරතුරු පෙන්වන්න
-        if (method === 'Bank') {
-            document.getElementById('bankOnlyFields').style.display = 'block';
-        } else {
-            document.getElementById('bankOnlyFields').style.display = 'none';
-        }
-    }
-
-    function showAd() {
-        if (window.AdController) {
-            window.AdController.show().then(() => {
-                points += 80; savePoints();
-                sendToTelegram("💰 Commission: 20 Points earned!");
-                alert("සාර්ථකයි! ලකුණු 80ක් එකතු වුණා.");
-            });
-        }
+        document.getElementById('bankOnlyFields').style.display = (method === 'Bank') ? 'block' : 'none';
     }
 
     function sendWithdrawRequest() {
         const name = document.getElementById('accName').value;
         const num = document.getElementById('accNum').value;
-        const bName = document.getElementById('bankName').value;
-        const bBranch = document.getElementById('bankBranch').value;
+        const bank = document.getElementById('bankDetails').value;
 
-        if (points < 4000) { alert("අවම ලකුණු 4000ක් අවශ්‍යයි!"); return; }
-
-        let extraInfo = "";
-        if (selectedMethod === 'Bank') {
-            if(!bName || !bBranch) { alert("බැංකුවේ නම සහ ශාඛාව ඇතුළත් කරන්න."); return; }
-            extraInfo = `🏦 Bank: ${bName}\n📍 Branch: ${bBranch}\n`;
-        }
+        if (points < 4000) { alert("Withdraw karanna aduma points 4000k oni!"); return; }
 
         if (name && num && selectedMethod) {
-            const msg = `🔔 *NEW WITHDRAW REQUEST*\n\n👤 Name: ${name}\n💳 Method: ${selectedMethod}\n${extraInfo}🔢 Acc/Num: ${num}\n💰 Points: ${points}\n\n⚠️ *APPROVAL REQUIRED*`;
-            sendToTelegram(msg);
-            alert("ඉල්ලීම යොමු කළා! Admin විසින් පරීක්ෂා කර Approve කරනු ඇත.");
+            let msg = `📢 *NEW WITHDRAW REQUEST*\n\n👤 User: ${name}\n💰 Points: ${points}\n💳 Method: ${selectedMethod}\n🔢 Acc/No: ${num}`;
+            if(selectedMethod === 'Bank') msg += `\n🏦 Bank: ${bank}`;
+            
+            sendToTelegram(msg + "\n\n⚠️ *Meka approve karanna.*");
+            alert("Request eka damma! Admin approve karana thuru inna.");
             points = 0; savePoints(); closeModals();
-        } else { alert("විස්තර සම්පූර්ණ කරන්න."); }
+        } else { alert("Okkom visthara purawanna."); }
     }
 
-    function adminLogin() {
-        let pass = prompt("Admin Password:");
-        if (pass === "ADMIN789") { alert("Welcome Admin!"); }
+    function doTask() {
+        window.open("https://youtube.com/@hiruwaofficial-b2i", "_blank");
+        setTimeout(() => { if(confirm("Subscribe kalada?")) { points += 50; savePoints(); } }, 6000);
     }
 
     function sendToTelegram(text) {
         fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
     }
 
-    function doTask() {
-        window.open("https://youtube.com/@hiruwaofficial-b2i", "_blank");
-        setTimeout(() => { if(confirm("ඔබ Subscribe කළාද?")) { points += 50; savePoints(); } }, 5000);
-    }
-
     function savePoints() {
         localStorage.setItem('lahiPoints', points);
+        updateUI();
+    }
+
+    function updateUI() {
         document.getElementById('balance').innerText = points.toLocaleString();
     }
 
     function openModal(id) {
         document.getElementById('overlay').style.display = 'block';
         document.getElementById(id).style.display = 'block';
-        if(id === 'withdrawModal') {
-            selectedMethod = "";
-            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('withdrawInputs').style.display = 'none';
-        }
     }
 
     function closeModals() {
