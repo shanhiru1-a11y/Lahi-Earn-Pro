@@ -12,35 +12,23 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             background: radial-gradient(circle at top, #1e293b, #0f172a); 
-            color: white; 
-            text-align: center; 
-            margin: 0; 
-            padding: 0; 
-            overflow-x: hidden;
+            color: white; text-align: center; margin: 0; padding: 0; overflow-x: hidden;
         }
 
         /* Startup Animation */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 10000; display: flex;
-            justify-content: center; align-items: center;
+            background: var(--bg); z-index: 10000; display: flex; justify-content: center; align-items: center;
         }
-        .logo-anim {
-            font-size: 35px; font-weight: 800; color: var(--primary);
-            letter-spacing: 5px; animation: pulse 1.5s infinite;
-        }
+        .logo-anim { font-size: 35px; font-weight: 800; color: var(--primary); letter-spacing: 5px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } }
 
         .container { padding: 20px; max-width: 450px; margin: auto; display: none; animation: fadeIn 1s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .balance-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(10px);
-            padding: 30px; 
-            border-radius: 30px; 
-            margin: 20px 0; 
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 30px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
@@ -49,17 +37,9 @@
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .btn { 
-            background: var(--card); 
-            color: white; 
-            border: none; 
-            padding: 18px 5px; 
-            border-radius: 20px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            font-size: 14px; 
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-bottom: 5px solid rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: var(--card); color: white; border: none; padding: 18px 5px; border-radius: 20px; 
+            font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s;
+            border-bottom: 5px solid rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .btn:active { transform: scale(0.95); border-bottom: none; }
         .btn-full { grid-column: span 2; background: linear-gradient(90deg, #0088cc, #00aaff); font-size: 16px; }
@@ -83,9 +63,7 @@
 </head>
 <body onload="initApp()">
 
-<div id="splash">
-    <div class="logo-anim">LAHI EARN PRO</div>
-</div>
+<div id="splash"><div class="logo-anim">LAHI EARN PRO</div></div>
 
 <div class="container" id="mainContent">
     <div style="display:flex; justify-content: space-between; align-items:center;">
@@ -102,4 +80,148 @@
 
     <div class="grid">
         <button class="btn btn-full" onclick="showAd()">📺 WATCH VIDEO AD <span style="font-size:10px; opacity:0.8;">(+80 Points)</span></button>
-        <button class="btn btn-full" style="background: linear-gradient(90deg, #c4302b, #ff4444);" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE <span style="font
+        <button class="btn btn-full" style="background: linear-gradient(90deg, #c4302b, #ff4444);" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE <span style="font-size:10px; opacity:0.8;">(+50 Points)</span></button>
+        <button class="btn" style="background: #e67e22;" onclick="openModal('lbModal')">🏆 RANKING</button>
+        <button class="btn" style="background: #8e44ad;" onclick="openModal('refModal')">👥 FRIENDS</button>
+        <button class="btn btn-full" style="background: linear-gradient(90deg, #27ae60, #2ecc71);" onclick="openModal('withdrawModal')">💰 WITHDRAW ALL MONEY</button>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeModals()"></div>
+
+<div id="withdrawModal" class="modal">
+    <h3 style="color:var(--primary); margin-bottom: 15px;">Withdrawal Method</h3>
+    <div class="method-grid">
+        <button class="method-btn" onclick="selectMethod(this, 'Bank')">🏦 Bank Transfer</button>
+        <button class="method-btn" onclick="selectMethod(this, 'Binance')">🟡 Binance</button>
+        <button class="method-btn" onclick="selectMethod(this, 'EzCash')">📱 EzCash</button>
+        <button class="method-btn" onclick="selectMethod(this, 'mCash')">📱 mCash</button>
+        <button class="method-btn" onclick="selectMethod(this, 'Reload')">💳 Reload</button>
+    </div>
+    
+    <div id="withdrawInputs" style="display: none;">
+        <input type="text" placeholder="Full Name" id="accName">
+        <div id="bankOnlyFields">
+            <input type="text" placeholder="Bank Name" id="bankName">
+            <input type="text" placeholder="Bank Branch" id="bankBranch">
+        </div>
+        <input type="text" placeholder="Account Number / Phone / ID" id="accNum">
+        <button class="btn btn-full" style="margin-top: 10px;" onclick="sendWithdrawRequest()">SUBMIT REQUEST</button>
+    </div>
+    <p id="minText" style="font-size:10px; color:grey; margin-top:10px;">Minimum withdraw: 4,000 Points</p>
+</div>
+
+<div id="lbModal" class="modal">
+    <h3 style="color:var(--primary)">Top Earners 🏆</h3>
+    <p>1. Lahiru (Admin) - 99,999</p>
+    <button class="btn btn-full" onclick="closeModals()">CLOSE</button>
+</div>
+
+<div id="refModal" class="modal">
+    <h3 style="color:var(--primary)">Invite Friends 👥</h3>
+    <p>Invite friends and earn points!</p>
+    <button class="btn btn-full" onclick="closeModals()">CLOSE</button>
+</div>
+
+<script>
+    let points = parseInt(localStorage.getItem('lahiPoints')) || 0;
+    const BOT_TOKEN = "8707763491:AAE8b44xX4lI_k_nhjN-DwbYAfYB8S9ntWg";
+    const ADMIN_CHAT_ID = "8193830513";
+    let selectedMethod = "";
+
+    function initApp() {
+        setTimeout(() => {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }, 3000);
+        document.getElementById('balance').innerText = points.toLocaleString();
+        if (window.Adsgram) { window.AdController = window.Adsgram.init({ blockId: "26784" }); }
+        if (!localStorage.getItem('registered')) {
+            sendToTelegram("🚀 New User Joined Lahi Earn Pro!");
+            localStorage.setItem('registered', 'true');
+        }
+    }
+
+    function selectMethod(btn, method) {
+        document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedMethod = method;
+        document.getElementById('withdrawInputs').style.display = 'block';
+        document.getElementById('minText').style.display = 'none';
+
+        // බැංකු ක්‍රමය නම් වැඩිපුර තොරතුරු පෙන්වන්න
+        if (method === 'Bank') {
+            document.getElementById('bankOnlyFields').style.display = 'block';
+        } else {
+            document.getElementById('bankOnlyFields').style.display = 'none';
+        }
+    }
+
+    function showAd() {
+        if (window.AdController) {
+            window.AdController.show().then(() => {
+                points += 80; savePoints();
+                sendToTelegram("💰 Commission: 20 Points earned!");
+                alert("සාර්ථකයි! ලකුණු 80ක් එකතු වුණා.");
+            });
+        }
+    }
+
+    function sendWithdrawRequest() {
+        const name = document.getElementById('accName').value;
+        const num = document.getElementById('accNum').value;
+        const bName = document.getElementById('bankName').value;
+        const bBranch = document.getElementById('bankBranch').value;
+
+        if (points < 4000) { alert("අවම ලකුණු 4000ක් අවශ්‍යයි!"); return; }
+
+        let extraInfo = "";
+        if (selectedMethod === 'Bank') {
+            if(!bName || !bBranch) { alert("බැංකුවේ නම සහ ශාඛාව ඇතුළත් කරන්න."); return; }
+            extraInfo = `🏦 Bank: ${bName}\n📍 Branch: ${bBranch}\n`;
+        }
+
+        if (name && num && selectedMethod) {
+            const msg = `🔔 *NEW WITHDRAW REQUEST*\n\n👤 Name: ${name}\n💳 Method: ${selectedMethod}\n${extraInfo}🔢 Acc/Num: ${num}\n💰 Points: ${points}\n\n⚠️ *APPROVAL REQUIRED*`;
+            sendToTelegram(msg);
+            alert("ඉල්ලීම යොමු කළා! Admin විසින් පරීක්ෂා කර Approve කරනු ඇත.");
+            points = 0; savePoints(); closeModals();
+        } else { alert("විස්තර සම්පූර්ණ කරන්න."); }
+    }
+
+    function adminLogin() {
+        let pass = prompt("Admin Password:");
+        if (pass === "ADMIN789") { alert("Welcome Admin!"); }
+    }
+
+    function sendToTelegram(text) {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+    }
+
+    function doTask() {
+        window.open("https://youtube.com/@hiruwaofficial-b2i", "_blank");
+        setTimeout(() => { if(confirm("ඔබ Subscribe කළාද?")) { points += 50; savePoints(); } }, 5000);
+    }
+
+    function savePoints() {
+        localStorage.setItem('lahiPoints', points);
+        document.getElementById('balance').innerText = points.toLocaleString();
+    }
+
+    function openModal(id) {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById(id).style.display = 'block';
+        if(id === 'withdrawModal') {
+            selectedMethod = "";
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('withdrawInputs').style.display = 'none';
+        }
+    }
+
+    function closeModals() {
+        document.getElementById('overlay').style.display = 'none';
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    }
+</script>
+</body>
+</html>
