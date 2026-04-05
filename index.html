@@ -183,11 +183,14 @@
     }
 
     function showAd() {
-        if (window.AdController) {
-            window.AdController.show().then(() => {
+        if (window.Adsgram) {
+            const AdController = window.Adsgram.init({ blockId: "26937" });
+            AdController.show().then((result) => {
                 points += 100; savePoints();
                 sendToTelegram("✅ User watched Ad. You earned 20% commission!");
                 alert("Success! 100 Points added.");
+            }).catch((result) => {
+                alert("Ad load une naha machan. Tikakin aye try karanna.");
             });
         }
     }
