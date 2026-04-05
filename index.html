@@ -5,115 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lahi Earn Pro</title>
     <script src="https://sad.adsgram.ai/js/adsgram-adbox.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f1c40f; --secondary: #0088cc; --bg: #0f172a; --card: #1e293b; --success: #2ecc71; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: white; text-align: center; margin: 0; padding: 0; }
-        .container { padding: 20px; max-width: 450px; margin: auto; }
-        .balance-card { background: linear-gradient(135deg, #1e293b, #334155); padding: 30px; border-radius: 25px; margin: 20px 0; border: 1px solid #475569; }
-        #balance { font-size: 50px; font-weight: 800; color: var(--primary); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { background: var(--card); color: white; border: none; padding: 18px 5px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 14px; border-bottom: 4px solid rgba(0,0,0,0.3); width: 100%; }
-        .btn:active { transform: translateY(2px); border-bottom: none; }
-        .btn-full { grid-column: span 2; background: var(--secondary); }
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1e293b; padding: 20px; border-radius: 20px; z-index: 1001; border: 1px solid var(--primary); }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; }
-        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: white; }
+        body { font-family: sans-serif; background-color: #0f172a; color: white; text-align: center; padding: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        #balance { font-size: 40px; color: #f1c40f; }
+        .btn { background: #0088cc; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; margin: 10px 0; font-weight: bold; }
     </style>
 </head>
-<body onload="initApp()">
+<body onload="updateUI()">
 
-<div class="container">
-    <h2 style="color: var(--primary);">LAHI EARN PRO</h2>
-    <div class="balance-card">
-        <p style="margin:0; opacity:0.7;">TOTAL POINTS</p>
+    <div class="card">
+        <h3>TOTAL POINTS</h3>
         <div id="balance">0</div>
     </div>
 
-    <div class="grid">
-        <button class="btn btn-full" onclick="showAd()">📺 WATCH VIDEO AD (+10)</button>
-        <button class="btn btn-full" style="background:#c4302b;" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE (+50)</button>
-        <button class="btn" style="background:#e67e22;" onclick="openModal('lbModal')">🏆 LEADERBOARD</button>
-        <button class="btn" style="background:#8e44ad;" onclick="openModal('refModal')">👥 REFERRAL</button>
-        <button class="btn btn-full" style="background:#27ae60;" onclick="openModal('withdrawModal')">💰 BANK WITHDRAW</button>
-    </div>
-</div>
-
-<div class="overlay" id="overlay" onclick="closeModals()"></div>
-
-<div id="lbModal" class="modal">
-    <h3>Top Earners 🏆</h3>
-    <p>1. Hiru (Admin) - 99,999</p>
-    <p>2. Lahi User - 12,450</p>
-    <button class="btn btn-full" onclick="closeModals()">CLOSE</button>
-</div>
-
-<div id="withdrawModal" class="modal">
-    <h3>Withdraw Request</h3>
-    <input type="text" placeholder="Full Name" id="accName">
-    <input type="text" placeholder="Account Number" id="accNum">
-    <input type="text" placeholder="Bank Name" id="accBank">
-    <button class="btn btn-full" onclick="sendToTelegram()">SEND REQUEST</button>
-    <button onclick="closeModals()" style="background:none; border:none; color:grey; margin-top:10px;">Cancel</button>
-</div>
+    <button class="btn" onclick="showAd()">📺 WATCH VIDEO AD (+10)</button>
+    <button class="btn" style="background:#c4302b;" onclick="window.open('https://youtube.com/@hiruwaofficial-b2i')">🔴 SUBSCRIBE YOUTUBE</button>
 
 <script>
-    let points = parseInt(localStorage.getItem('lahiPoints')) || 0;
-    const BOT_TOKEN = "8707763491:AAE8b44xX4lI_k_nhjN-DwbYAfYB8S9ntWg";
-    const ADMIN_CHAT_ID = "8193830513";
+    let points = parseInt(localStorage.getItem('points')) || 0;
 
-    function initApp() {
-        document.getElementById('balance').innerText = points.toLocaleString();
+    function updateUI() {
+        document.getElementById('balance').innerText = points;
     }
 
     function showAd() {
-        // AdsGram Script එක තියෙනවද බලනවා
-        if (typeof window.Adsgram !== 'undefined') {
-            const AdController = window.Adsgram.init({ blockId: "26897" });
-            AdController.show().then(() => {
+        // AdsGram script එක පරීක්ෂා කිරීම
+        if (window.Adsgram) {
+            const ad = window.Adsgram.init({ blockId: "26897" });
+            ad.show().then(() => {
                 points += 10;
-                savePoints();
-                alert("Points 10 Added! 🎉");
+                localStorage.setItem('points', points);
+                updateUI();
+                alert("Success! Points added.");
             }).catch((err) => {
-                console.error(err);
-                alert("දැනට Ads නොමැත (No Fill). පසුව උත්සාහ කරන්න.");
+                alert("Ads නැත (No Fill). පසුව උත්සාහ කරන්න.");
             });
         } else {
-            alert("AdsGram script load වෙලා නැහැ. කරුණාකර අන්තර්ජාලය පරීක්ෂා කර පසුව උත්සාහ කරන්න.");
+            // Script එක load වෙලා නැති වුණොත් මේ alert එක එනවා
+            alert("AdsGram script එක load වෙලා නැහැ. කරුණාකර පිටුව Refresh කරන්න හෝ Internet check කරන්න.");
         }
-    }
-
-    function doTask() {
-        window.open("https://youtube.com/@hiruwaofficial-b2i?si=_OBxLzdP8_z9C-jM", "_blank");
-        setTimeout(() => { if(confirm("ඔබ Subscribe කළාද?")) { points += 50; savePoints(); } }, 4000);
-    }
-
-    function sendToTelegram() {
-        const name = document.getElementById('accName').value;
-        const num = document.getElementById('accNum').value;
-        const bank = document.getElementById('accBank').value;
-        if (points < 4000) { alert("අවම ලකුණු 4000ක් අවශ්‍යයි!"); return; }
-        if (name && num && bank) {
-            const msg = `🚀 New Withdraw Request\nName: ${name}\nAcc: ${num}\nBank: ${bank}\nPoints: ${points}`;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(msg)}`);
-            alert("Request Sent!");
-            points -= 4000; savePoints(); closeModals();
-        }
-    }
-
-    function openModal(id) {
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById(id).style.display = 'block';
-    }
-
-    function closeModals() {
-        document.getElementById('overlay').style.display = 'none';
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    }
-
-    function savePoints() {
-        localStorage.setItem('lahiPoints', points);
-        document.getElementById('balance').innerText = points.toLocaleString();
     }
 </script>
 </body>
