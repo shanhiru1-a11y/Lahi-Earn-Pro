@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lahi Earn Pro</title>
-    <script src="https://app.adsgram.ai/js/adsgram-ad-sdk.js"></script>
+    <script src="https://adsgram.ai/sdk-v1.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f1c40f; --secondary: #0088cc; --bg: #0f172a; --card: #1e293b; --accent: #e74c3c; }
@@ -133,16 +133,19 @@
     let points = parseInt(localStorage.getItem('lahiPoints')) || 0;
     const BOT_TOKEN = "8707763491:AAE8b44xX4lI_k_nhjN-DwbYAfYB8S9ntWg";
     const ADMIN_CHAT_ID = "8193830513";
+    let AdController;
 
     function initApp() {
         document.getElementById('balance').innerText = points.toLocaleString();
+        
+        // Ad Controller එක මෙතනදීම Initialize කරන එක හොඳයි
+        if (window.Adsgram) {
+            AdController = window.Adsgram.init({ blockId: "26784" });
+        }
     }
 
-    // මම මෙතනට ඔයාගේ අලුත් Block ID එක (26784) දැම්මා
     function showAd() {
-        if (window.adsgram) {
-            const AdController = window.adsgram.init({ blockId: "26784" });
-            
+        if (AdController) {
             AdController.show().then((result) => {
                 points += 10;
                 savePoints();
@@ -150,10 +153,11 @@
                 alert("සාර්ථකයි! ලකුණු 10ක් එකතු වුණා. 🎉");
             }).catch((result) => {
                 console.error(result);
-                alert("දැනට Ads නොමැත. කරුණාකර මොහොතකින් නැවත උත්සාහ කරන්න.");
+                // Ad එකක් වෙලාවට පෙන්නන්න බැරි වුණොත් එන මැසේජ් එක
+                alert("දැන්වීම් පූරණය වීමේ දෝෂයක්. කරුණාකර නැවත උත්සාහ කරන්න.");
             });
         } else {
-            alert("Ads SDK එක load වී නැත. කරුණාකර Refresh කරන්න.");
+            alert("Ads SDK එක තවමත් සූදානම් නැත. කරුණාකර තප්පරයක් රැඳී සිට නැවත උත්සාහ කරන්න.");
         }
     }
 
