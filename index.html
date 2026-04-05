@@ -44,6 +44,7 @@
         .btn:active { transform: scale(0.95); border-bottom: none; }
         .btn-full { grid-column: span 2; background: linear-gradient(90deg, #0088cc, #00aaff); font-size: 16px; }
 
+        /* Method Selection Buttons */
         .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .method-btn { 
             background: #0f172a; border: 1px solid #475569; color: white; padding: 10px; 
@@ -70,13 +71,15 @@
         <button onclick="adminLogin()" style="background:none; border:none; color:#334155; font-size:10px;">ADMIN</button>
     </div>
     
+    <p style="font-size:12px; color:gray; margin-top:10px;">👥 Active Users: <span id="userCount">0</span></p>
+
     <div class="balance-card">
         <p style="margin:0; opacity:0.6; font-size: 14px;">AVAILABLE POINTS</p>
         <div id="balance">0</div>
     </div>
 
     <div class="grid">
-        <button class="btn btn-full" onclick="showAd()">📺 WATCH VIDEO AD <span style="font-size:10px; opacity:0.8;">(+100 Points)</span></button>
+        <button class="btn btn-full" onclick="showAd()">📺 WATCH VIDEO AD <span style="font-size:10px; opacity:0.8;">(+80 Points)</span></button>
         <button class="btn btn-full" style="background: linear-gradient(90deg, #c4302b, #ff4444);" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE <span style="font-size:10px; opacity:0.8;">(+50 Points)</span></button>
         <button class="btn" style="background: #e67e22;" onclick="openModal('lbModal')">🏆 RANKING</button>
         <button class="btn" style="background: #8e44ad;" onclick="openModal('refModal')">👥 FRIENDS</button>
@@ -98,7 +101,7 @@
     
     <div id="withdrawInputs" style="display: none;">
         <input type="text" placeholder="Full Name" id="accName">
-        <div id="bankOnlyFields" style="display: none;">
+        <div id="bankOnlyFields">
             <input type="text" placeholder="Bank Name" id="bankName">
             <input type="text" placeholder="Bank Branch" id="bankBranch">
         </div>
@@ -133,6 +136,10 @@
         }, 3000);
         document.getElementById('balance').innerText = points.toLocaleString();
         if (window.Adsgram) { window.AdController = window.Adsgram.init({ blockId: "26784" }); }
+        if (!localStorage.getItem('registered')) {
+            sendToTelegram("🚀 New User Joined Lahi Earn Pro!");
+            localStorage.setItem('registered', 'true');
+        }
     }
 
     function selectMethod(btn, method) {
@@ -140,29 +147,51 @@
         btn.classList.add('active');
         selectedMethod = method;
         document.getElementById('withdrawInputs').style.display = 'block';
-        document.getElementById('bankOnlyFields').style.display = (method === 'Bank') ? 'block' : 'none';
+        document.getElementById('minText').style.display = 'none';
+
+        // බැංකු ක්‍රමය නම් වැඩිපුර තොරතුරු පෙන්වන්න
+        if (method === 'Bank') {
+            document.getElementById('bankOnlyFields').style.display = 'block';
+        } else {
+            document.getElementById('bankOnlyFields').style.display = 'none';
+        }
     }
 
     function showAd() {
         if (window.AdController) {
             window.AdController.show().then(() => {
-                points += 100; savePoints();
-                sendToTelegram("💰 *Ad Viewed!* Admin Commission: 20 Points.");
-                alert("සාර්ථකයි! ලකුණු 100ක් එකතු වුණා.");
-            }).catch(() => { alert("Ad එක සම්පූර්ණයෙන් නරඹන්න."); });
-        } else { alert("Ad platform loading..."); }
+                points += 80; savePoints();
+                sendToTelegram("💰 Commission: 20 Points earned!");
+                alert("සාර්ථකයි! ලකුණු 80ක් එකතු වුණා.");
+            });
+        }
     }
 
     function sendWithdrawRequest() {
         const name = document.getElementById('accName').value;
         const num = document.getElementById('accNum').value;
+        const bName = document.getElementById('bankName').value;
+        const bBranch = document.getElementById('bankBranch').value;
+
         if (points < 4000) { alert("අවම ලකුණු 4000ක් අවශ්‍යයි!"); return; }
+
+        let extraInfo = "";
+        if (selectedMethod === 'Bank') {
+            if(!bName || !bBranch) { alert("බැංකුවේ නම සහ ශාඛාව ඇතුළත් කරන්න."); return; }
+            extraInfo = `🏦 Bank: ${bName}\n📍 Branch: ${bBranch}\n`;
+        }
+
         if (name && num && selectedMethod) {
-            const msg = `🔔 *NEW REQUEST*\n👤 Name: ${name}\n💳 Method: ${selectedMethod}\n🔢 Acc: ${num}\n💰 Points: ${points}`;
+            const msg = `🔔 *NEW WITHDRAW REQUEST*\n\n👤 Name: ${name}\n💳 Method: ${selectedMethod}\n${extraInfo}🔢 Acc/Num: ${num}\n💰 Points: ${points}\n\n⚠️ *APPROVAL REQUIRED*`;
             sendToTelegram(msg);
-            alert("Request sent!");
+            alert("ඉල්ලීම යොමු කළා! Admin විසින් පරීක්ෂා කර Approve කරනු ඇත.");
             points = 0; savePoints(); closeModals();
         } else { alert("විස්තර සම්පූර්ණ කරන්න."); }
+    }
+
+    function adminLogin() {
+        let pass = prompt("Admin Password:");
+        if (pass === "ADMIN789") { alert("Welcome Admin!"); }
     }
 
     function sendToTelegram(text) {
@@ -171,7 +200,7 @@
 
     function doTask() {
         window.open("https://youtube.com/@hiruwaofficial-b2i", "_blank");
-        setTimeout(() => { if(confirm("Subscribed?")) { points += 50; savePoints(); } }, 5000);
+        setTimeout(() => { if(confirm("ඔබ Subscribe කළාද?")) { points += 50; savePoints(); } }, 5000);
     }
 
     function savePoints() {
@@ -182,15 +211,16 @@
     function openModal(id) {
         document.getElementById('overlay').style.display = 'block';
         document.getElementById(id).style.display = 'block';
+        if(id === 'withdrawModal') {
+            selectedMethod = "";
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('withdrawInputs').style.display = 'none';
+        }
     }
 
     function closeModals() {
         document.getElementById('overlay').style.display = 'none';
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    }
-
-    function adminLogin() {
-        if (prompt("Admin Password:") === "ADMIN789") alert("Welcome Admin!");
     }
 </script>
 </body>
