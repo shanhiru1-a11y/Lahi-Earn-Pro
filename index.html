@@ -138,19 +138,17 @@
         document.getElementById('balance').innerText = points.toLocaleString();
     }
 
-    // නිවැරදි කරන ලද Ad Logic එක
+    // මම මෙතනට ඔයාගේ අලුත් Block ID එක (26784) දැම්මා
     function showAd() {
         if (window.adsgram) {
-            const AdController = window.adsgram.init({ blockId: "26897" });
+            const AdController = window.adsgram.init({ blockId: "26784" });
             
             AdController.show().then((result) => {
-                // Ad එක සාර්ථකව බැලුවා නම් පමණක් points දෙන්න
                 points += 10;
                 savePoints();
                 animateBalance();
                 alert("සාර්ථකයි! ලකුණු 10ක් එකතු වුණා. 🎉");
             }).catch((result) => {
-                // Ad එක load නොවුණොත් හෝ user skip කළොත්
                 console.error(result);
                 alert("දැනට Ads නොමැත. කරුණාකර මොහොතකින් නැවත උත්සාහ කරන්න.");
             });
