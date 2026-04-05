@@ -1,12 +1,5 @@
-function showAd() {
-    const adController = window.Adsgram.init({ blockId: "26897" });
-    adController.show().then((result) => {
-        points += 10;
-        savePoints();
-        alert("සුභ පැතුම්! ඔබට points 10ක් ලැබුණා.");
-    }).catch((result) => {
-        // Ad එක ප්ලේ නොවෙන්න හේතුව මෙතනින් බලාගන්න පුළුවන්
-        console.error(result);
-        alert("දැනට Ads නොමැත (No Fill). පසුව උත්සාහ කරන්න.");
-    });
-}
+// ✅ මේක නිවැරදියි (Block ID එක විතරක් දාන්න)
+const AdController = window.Adsgram.init({ blockId: "26897" });
+
+// ❌ මේක වැරදියි (Platform ID එක දාන්න එපා)
+const AdController = window.Adsgram.init({ blockId: "26004" }); 
