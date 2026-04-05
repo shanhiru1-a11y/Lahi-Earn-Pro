@@ -3,102 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lahi Earn Pro - Official</title>
+    <title>Lahi Earn Pro</title>
     <script src="https://sad.adsgram.ai/js/adsgram-adbox.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f1c40f; --secondary: #0088cc; --bg: #0f172a; --card: #1e293b; --success: #2ecc71; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: white; text-align: center; margin: 0; padding: 0; user-select: none; }
-        
-        /* Splash Screen */
-        #splash { position: fixed; width: 100%; height: 100%; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; transition: 0.8s; }
-        .logo-ring { width: 100px; height: 100px; border: 5px solid var(--primary); border-radius: 30%; animation: spin 3s linear infinite; box-shadow: 0 0 20px var(--primary); }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .container { padding: 20px; max-width: 450px; margin: auto; padding-bottom: 50px; }
-        .balance-card { background: linear-gradient(135deg, #1e293b, #334155); padding: 35px 20px; border-radius: 30px; margin: 20px 0; border: 1px solid #475569; box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-        #balance { font-size: 55px; font-weight: 800; color: var(--primary); text-shadow: 0 5px 15px rgba(241, 196, 15, 0.2); }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: var(--card); color: white; border: none; padding: 18px 10px; border-radius: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; border-bottom: 4px solid rgba(0,0,0,0.3); font-size: 14px; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: white; text-align: center; margin: 0; padding: 0; }
+        .container { padding: 20px; max-width: 450px; margin: auto; }
+        .balance-card { background: linear-gradient(135deg, #1e293b, #334155); padding: 30px; border-radius: 25px; margin: 20px 0; border: 1px solid #475569; }
+        #balance { font-size: 50px; font-weight: 800; color: var(--primary); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { background: var(--card); color: white; border: none; padding: 18px 5px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 14px; border-bottom: 4px solid rgba(0,0,0,0.3); }
         .btn:active { transform: translateY(2px); border-bottom: none; }
-        .btn-full { grid-column: span 2; background: var(--secondary); border-color: #006699; }
-        .btn-yt { background: #c4302b; border-color: #992522; }
-
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1e293b; padding: 25px; border-radius: 25px; z-index: 1001; border: 1px solid var(--primary); box-shadow: 0 0 100px rgba(0,0,0,0.9); }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; }
-        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; }
-        .lb-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #334155; font-size: 14px; }
+        .btn-full { grid-column: span 2; background: var(--secondary); }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1e293b; padding: 20px; border-radius: 20px; z-index: 1001; border: 1px solid var(--primary); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; }
+        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: white; }
     </style>
 </head>
 <body onload="initApp()">
 
-<div id="splash">
-    <div class="logo-ring"></div>
-    <h1 style="color: var(--primary); margin-top: 30px; letter-spacing: 4px;">LAHI EARN PRO</h1>
-    <p style="opacity: 0.6;">Secure Earning Platform</p>
-</div>
-
 <div class="container">
-    <h3 style="margin-top: 10px; opacity: 0.8; letter-spacing: 2px;">WELCOME BACK</h3>
-    
+    <h2 style="color: var(--primary);">LAHI EARN PRO</h2>
     <div class="balance-card">
-        <p style="margin: 0; font-size: 13px; color: #94a3b8; font-weight: 600;">TOTAL EARNINGS</p>
+        <p style="margin:0; opacity:0.7;">TOTAL POINTS</p>
         <div id="balance">0</div>
-        <p style="margin: 0; font-size: 11px; color: var(--success);">✔ Minimum Payout: 4,000 Pts</p>
     </div>
 
     <div class="grid">
         <button class="btn btn-full" onclick="showAd()">📺 WATCH VIDEO AD (+10)</button>
-        <button class="btn btn-full btn-yt" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE (+50)</button>
-        <button class="btn" style="background: #e67e22;" onclick="openModal('lbModal')">🏆 LEADERBOARD</button>
-        <button class="btn" style="background: #8e44ad;" onclick="openModal('refModal')">👥 REFERRAL</button>
-        <button class="btn btn-full" style="background: #27ae60;" onclick="openModal('withdrawModal')">🏦 BANK TRANSFER</button>
+        <button class="btn btn-full" style="background:#c4302b;" onclick="doTask()">🔴 SUBSCRIBE YOUTUBE (+50)</button>
+        <button class="btn" style="background:#e67e22;" onclick="openModal('lbModal')">🏆 LEADERBOARD</button>
+        <button class="btn" style="background:#8e44ad;" onclick="openModal('refModal')">👥 REFERRAL</button>
+        <button class="btn btn-full" style="background:#27ae60;" onclick="openModal('withdrawModal')">💰 BANK WITHDRAW</button>
     </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeModals()"></div>
 
 <div id="lbModal" class="modal">
-    <h3 style="color: var(--primary);">Global Rankings 🏆</h3>
-    <div class="lb-row"><span>🥇 Hiru (Admin)</span><span>150,000</span></div>
-    <div class="lb-row"><span>🥈 Lahi User</span><span>12,400</span></div>
-    <div class="lb-row"><span>🥉 Nuwan 99</span><span>8,500</span></div>
-    <button class="btn btn-full" style="margin-top: 15px; background: #475569;" onclick="closeModals()">CLOSE</button>
+    <h3>Top Earners 🏆</h3>
+    <p>1. Hiru (Admin) - 99,999</p>
+    <p>2. Lahi User - 12,450</p>
+    <button class="btn btn-full" onclick="closeModals()">CLOSE</button>
 </div>
 
 <div id="withdrawModal" class="modal">
-    <h3 style="color: var(--success);">Withdraw Request 💸</h3>
+    <h3>Withdraw Request</h3>
     <input type="text" placeholder="Full Name" id="accName">
     <input type="text" placeholder="Account Number" id="accNum">
-    <input type="text" placeholder="Bank & Branch Name" id="accBank">
-    <button class="btn btn-full" style="background: var(--success);" onclick="sendToAdmin()">SEND REQUEST</button>
-    <button onclick="closeModals()" style="background:none; border:none; color:grey; margin-top:10px; cursor:pointer;">Cancel</button>
-</div>
-
-<div id="refModal" class="modal">
-    <h3>Refer a Friend 👥</h3>
-    <p style="font-size: 12px; opacity: 0.8;">ඔබේ මිතුරාට 200ක් ද ඔබට 100ක් ද ලැබේ.</p>
-    <input type="text" id="refLink" readonly style="color: var(--primary);">
-    <button class="btn btn-full" onclick="copyRef()">COPY LINK</button>
+    <input type="text" placeholder="Bank Name" id="accBank">
+    <button class="btn btn-full" onclick="sendToTelegram()">SEND REQUEST</button>
+    <button onclick="closeModals()" style="background:none; border:none; color:grey; margin-top:10px;">Cancel</button>
 </div>
 
 <script>
     let points = parseInt(localStorage.getItem('lahiPoints')) || 0;
     const BOT_TOKEN = "8707763491:AAE8b44xX4lI_k_nhjN-DwbYAfYB8S9ntWg";
     const ADMIN_CHAT_ID = "8193830513";
-    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "26897" }) : null;
 
     function initApp() {
         document.getElementById('balance').innerText = points.toLocaleString();
-        setTimeout(() => { document.getElementById('splash').style.opacity = '0'; 
-        setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 800); }, 2500);
     }
 
     function showAd() {
-        if(AdController) {
-            AdController.show().then(() => { points += 10; savePoints(); alert("Points 10 Added! 🎉"); })
-            .catch(() => { alert("Ad not available yet. Try again."); });
+        if (window.Adsgram) {
+            const AdController = window.Adsgram.init({ blockId: "26897" });
+            AdController.show().then(() => {
+                points += 10;
+                savePoints();
+                alert("Points 10 Added! 🎉");
+            }).catch((err) => {
+                console.error(err);
+                alert("දැනට Ads නොමැත (No Fill). පසුව උත්සාහ කරන්න.");
+            });
+        } else {
+            alert("AdsGram script load වෙලා නැහැ.");
         }
     }
 
@@ -107,38 +87,27 @@
         setTimeout(() => { if(confirm("ඔබ Subscribe කළාද?")) { points += 50; savePoints(); } }, 4000);
     }
 
-    function sendToAdmin() {
+    function sendToTelegram() {
         const name = document.getElementById('accName').value;
         const num = document.getElementById('accNum').value;
         const bank = document.getElementById('accBank').value;
-
-        if (points < 4000) { alert("අවම ලකුණු 4,000ක් අවශ්‍යයි!"); return; }
-        if (!name || !num || !bank) { alert("සියලු විස්තර පුරවන්න."); return; }
-
-        const message = `🔔 *New Payout Request*\n\n👤 Name: ${name}\n💳 Acc: ${num}\n🏦 Bank: ${bank}\n💰 Points: ${points}`;
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
-
-        fetch(url).then(() => {
-            alert("සාර්ථකයි! විස්තර Admin වෙත යොමු කළා. පැය 24කින් මුදල් ලැබෙනු ඇත.");
+        if (points < 4000) { alert("අවම ලකුණු 4000ක් අවශ්‍යයි!"); return; }
+        if (name && num && bank) {
+            const msg = `🚀 New Withdraw Request\nName: ${name}\nAcc: ${num}\nBank: ${bank}\nPoints: ${points}`;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(msg)}`);
+            alert("Request Sent!");
             points -= 4000; savePoints(); closeModals();
-        }).catch(() => alert("Error connecting to server."));
+        }
     }
 
     function openModal(id) {
         document.getElementById('overlay').style.display = 'block';
         document.getElementById(id).style.display = 'block';
-        if(id === 'refModal') document.getElementById('refLink').value = window.location.href + "?ref=user" + Math.floor(Math.random()*100);
     }
 
     function closeModals() {
         document.getElementById('overlay').style.display = 'none';
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    }
-
-    function copyRef() {
-        document.getElementById("refLink").select();
-        document.execCommand("copy");
-        alert("Referral Link Copied!");
     }
 
     function savePoints() {
