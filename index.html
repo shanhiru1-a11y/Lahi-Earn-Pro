@@ -13,7 +13,7 @@
         .balance-card { background: linear-gradient(135deg, #1e293b, #334155); padding: 30px; border-radius: 25px; margin: 20px 0; border: 1px solid #475569; }
         #balance { font-size: 50px; font-weight: 800; color: var(--primary); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { background: var(--card); color: white; border: none; padding: 18px 5px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 14px; border-bottom: 4px solid rgba(0,0,0,0.3); }
+        .btn { background: var(--card); color: white; border: none; padding: 18px 5px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 14px; border-bottom: 4px solid rgba(0,0,0,0.3); width: 100%; }
         .btn:active { transform: translateY(2px); border-bottom: none; }
         .btn-full { grid-column: span 2; background: var(--secondary); }
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1e293b; padding: 20px; border-radius: 20px; z-index: 1001; border: 1px solid var(--primary); }
@@ -67,7 +67,8 @@
     }
 
     function showAd() {
-        if (window.Adsgram) {
+        // AdsGram Script එක තියෙනවද බලනවා
+        if (typeof window.Adsgram !== 'undefined') {
             const AdController = window.Adsgram.init({ blockId: "26897" });
             AdController.show().then(() => {
                 points += 10;
@@ -78,7 +79,7 @@
                 alert("දැනට Ads නොමැත (No Fill). පසුව උත්සාහ කරන්න.");
             });
         } else {
-            alert("AdsGram script load වෙලා නැහැ.");
+            alert("AdsGram script load වෙලා නැහැ. කරුණාකර අන්තර්ජාලය පරීක්ෂා කර පසුව උත්සාහ කරන්න.");
         }
     }
 
