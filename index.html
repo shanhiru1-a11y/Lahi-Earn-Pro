@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lahi Earn Pro</title>
-    <script src="https://sad.adsgram.ai/js/adsgram-adbox.js"></script>
+    <script src="https://app.adsgram.ai/js/adsgram-ad-sdk.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #f1c40f; --secondary: #0088cc; --bg: #0f172a; --card: #1e293b; --accent: #e74c3c; }
@@ -138,19 +138,24 @@
         document.getElementById('balance').innerText = points.toLocaleString();
     }
 
+    // නිවැරදි කරන ලද Ad Logic එක
     function showAd() {
-        if (typeof window.Adsgram !== 'undefined') {
-            const AdController = window.Adsgram.init({ blockId: "26897" });
-            AdController.show().then(() => {
+        if (window.adsgram) {
+            const AdController = window.adsgram.init({ blockId: "26897" });
+            
+            AdController.show().then((result) => {
+                // Ad එක සාර්ථකව බැලුවා නම් පමණක් points දෙන්න
                 points += 10;
                 savePoints();
                 animateBalance();
-                alert("Success! +10 Points Added. 🎉");
-            }).catch(() => {
-                alert("දැනට Ads නොමැත. කරුණාකර විනාඩි කිහිපයකින් උත්සාහ කරන්න.");
+                alert("සාර්ථකයි! ලකුණු 10ක් එකතු වුණා. 🎉");
+            }).catch((result) => {
+                // Ad එක load නොවුණොත් හෝ user skip කළොත්
+                console.error(result);
+                alert("දැනට Ads නොමැත. කරුණාකර මොහොතකින් නැවත උත්සාහ කරන්න.");
             });
         } else {
-            alert("AdsGram load වීමේ දෝෂයකි. කරුණාකර Refresh කරන්න.");
+            alert("Ads SDK එක load වී නැත. කරුණාකර Refresh කරන්න.");
         }
     }
 
