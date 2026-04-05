@@ -20,11 +20,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 10000; display: flex; justify-content: center; align-items: center;
         }
-        .logo-anim { 
-            font-size: 35px; font-weight: 800; color: var(--primary); 
-            letter-spacing: 5px; animation: pulse 1.5s infinite; 
-            text-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
-        }
+        .logo-anim { font-size: 35px; font-weight: 800; color: var(--primary); letter-spacing: 5px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } }
 
         .container { padding: 20px; max-width: 450px; margin: auto; display: none; animation: fadeIn 1s ease-in; }
@@ -74,8 +70,6 @@
         <button onclick="adminLogin()" style="background:none; border:none; color:#334155; font-size:10px;">ADMIN</button>
     </div>
     
-    <p style="font-size:12px; color:gray; margin-top:10px;">👥 Active Users: <span id="userCount">1</span></p>
-
     <div class="balance-card">
         <p style="margin:0; opacity:0.6; font-size: 14px;">AVAILABLE POINTS</p>
         <div id="balance">0</div>
@@ -109,7 +103,7 @@
             <input type="text" placeholder="Bank Branch" id="bankBranch">
         </div>
         <input type="text" placeholder="Account Number / Phone / ID" id="accNum">
-        <button class="btn btn-full" style="margin-top: 10px; background: var(--selected);" onclick="sendWithdrawRequest()">SUBMIT REQUEST</button>
+        <button class="btn btn-full" style="margin-top: 10px;" onclick="sendWithdrawRequest()">SUBMIT REQUEST</button>
     </div>
     <p id="minText" style="font-size:10px; color:grey; margin-top:10px;">Minimum withdraw: 4,000 Points</p>
 </div>
@@ -133,42 +127,12 @@
     let selectedMethod = "";
 
     function initApp() {
-        // Splash screen timer
         setTimeout(() => {
             document.getElementById('splash').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
         }, 3000);
-
         document.getElementById('balance').innerText = points.toLocaleString();
-
-        // AdsGram Initializing
-        if (window.Adsgram) {
-            window.AdController = window.Adsgram.init({ blockId: "26784" });
-        }
-
-        // New User Notification
-        if (!localStorage.getItem('registered')) {
-            sendToTelegram("🚀 *New User Joined Lahi Earn Pro!*");
-            localStorage.setItem('registered', 'true');
-        }
-    }
-
-    function showAd() {
-        if (window.AdController) {
-            window.AdController.show().then((result) => {
-                // Ad completed successfully
-                points += 100; 
-                savePoints();
-                sendToTelegram("💰 *Ad Viewed Successfully!*\nUser earned: 100\nAdmin Commission: 20 Points");
-                alert("සාර්ථකයි! ලකුණු 100ක් එකතු වුණා.");
-            }).catch((err) => {
-                // Ad failed or skipped
-                alert("Ad එක සම්පූර්ණයෙන් නැරඹිය යුතුය.");
-                console.log("AdsGram Error: ", err);
-            });
-        } else {
-            alert("Ads තවමත් Load වෙමින් පවතී. තත්පර කිහිපයකින් උත්සාහ කරන්න.");
-        }
+        if (window.Adsgram) { window.AdController = window.Adsgram.init({ blockId: "26784" }); }
     }
 
     function selectMethod(btn, method) {
@@ -176,11 +140,58 @@
         btn.classList.add('active');
         selectedMethod = method;
         document.getElementById('withdrawInputs').style.display = 'block';
-        document.getElementById('minText').style.display = 'none';
-
-        if (method === 'Bank') {
-            document.getElementById('bankOnlyFields').style.display = 'block';
-        } else {
-            document.getElementById('bankOnlyFields').style.display = 'none';
-        }
+        document.getElementById('bankOnlyFields').style.display = (method === 'Bank') ? 'block' : 'none';
     }
+
+    function showAd() {
+        if (window.AdController) {
+            window.AdController.show().then(() => {
+                points += 100; savePoints();
+                sendToTelegram("💰 *Ad Viewed!* Admin Commission: 20 Points.");
+                alert("සාර්ථකයි! ලකුණු 100ක් එකතු වුණා.");
+            }).catch(() => { alert("Ad එක සම්පූර්ණයෙන් නරඹන්න."); });
+        } else { alert("Ad platform loading..."); }
+    }
+
+    function sendWithdrawRequest() {
+        const name = document.getElementById('accName').value;
+        const num = document.getElementById('accNum').value;
+        if (points < 4000) { alert("අවම ලකුණු 4000ක් අවශ්‍යයි!"); return; }
+        if (name && num && selectedMethod) {
+            const msg = `🔔 *NEW REQUEST*\n👤 Name: ${name}\n💳 Method: ${selectedMethod}\n🔢 Acc: ${num}\n💰 Points: ${points}`;
+            sendToTelegram(msg);
+            alert("Request sent!");
+            points = 0; savePoints(); closeModals();
+        } else { alert("විස්තර සම්පූර්ණ කරන්න."); }
+    }
+
+    function sendToTelegram(text) {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+    }
+
+    function doTask() {
+        window.open("https://youtube.com/@hiruwaofficial-b2i", "_blank");
+        setTimeout(() => { if(confirm("Subscribed?")) { points += 50; savePoints(); } }, 5000);
+    }
+
+    function savePoints() {
+        localStorage.setItem('lahiPoints', points);
+        document.getElementById('balance').innerText = points.toLocaleString();
+    }
+
+    function openModal(id) {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function closeModals() {
+        document.getElementById('overlay').style.display = 'none';
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    }
+
+    function adminLogin() {
+        if (prompt("Admin Password:") === "ADMIN789") alert("Welcome Admin!");
+    }
+</script>
+</body>
+</html>
