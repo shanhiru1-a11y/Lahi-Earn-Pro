@@ -10,174 +10,106 @@
     <style>
         :root { --bg-blue: #001f3f; --yellow: #ffd700; --white: #ffffff; }
         body { background-color: var(--bg-blue); color: var(--white); font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
-        
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .balance-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; border: 2px solid var(--yellow); margin-bottom: 20px; }
+        .balance-card { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; border: 2px solid var(--yellow); margin-bottom: 20px; }
         #points { font-size: 3.5em; color: var(--yellow); font-weight: 900; }
-        
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
-        .action-btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; }
-        .icon { font-size: 24px; margin-bottom: 8px; }
-
-        /* Modal Styles */
+        .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); padding: 25px; z-index: 2000; box-sizing: border-box; }
-        .modal-content { background: #111; padding: 20px; border-radius: 15px; border: 1px solid var(--yellow); margin-top: 50px; }
-        .verify-btn { background: #2ecc71; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-        
-        #user-history { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; text-align: left; font-size: 0.8em; margin-top: 10px; border: 1px solid #333; max-height: 100px; overflow-y: auto; }
+        .modal-content { background: #111; padding: 20px; border-radius: 15px; border: 1px solid var(--yellow); margin-top: 30px; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var(--yellow); background: #222; color: white; text-align: center; font-size: 1.2em; }
+        .claim-btn { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="balance-card">
-            <p style="margin:0; opacity: 0.8;">Balance</p>
+            <p>Your Balance</p>
             <div id="points">0</div>
-            <p style="margin:0; font-weight: bold;">POINTS</p>
+            <p>POINTS</p>
         </div>
 
         <div class="grid-menu">
-            <button class="action-btn" id="adBtn" onclick="watchAd()">
-                <span class="icon">📺</span> <span id="adText">Watch Ad (+100)</span>
-            </button>
-
-            <button class="action-btn" onclick="claimDaily()">
-                <span class="icon">🎁</span> Daily Bonus
-            </button>
-
-            <button class="action-btn" onclick="openModal('withdraw-modal')">
-                <span class="icon">💸</span> Withdraw
-            </button>
-
-            <button class="action-btn" id="refBtn" onclick="startTask('ref')">
-                <span class="icon">👥</span> Invite (+150)
-            </button>
-
-            <button class="action-btn" id="ytBtn" onclick="startTask('yt')">
-                <span class="icon">🔴</span> YouTube (+250)
-            </button>
-
-            <button class="action-btn" onclick="window.open('https://t.me/hiru1397bot')">
-                <span class="icon">🎧</span> Support
-            </button>
+            <button class="action-btn" onclick="watchAd()">📺 Watch Ad</button>
+            <button class="action-btn" onclick="startTask('yt')">🔴 YouTube (+250)</button>
+            <button class="action-btn" onclick="startTask('ref')">👥 Invite (+150)</button>
+            <button class="action-btn" onclick="openModal('withdraw-modal')">💸 Withdraw</button>
         </div>
-
-        <h4 style="text-align:left; color:var(--yellow); margin-top:20px;">History</h4>
-        <div id="user-history">No data.</div>
     </div>
 
     <div id="task-modal" class="modal">
         <div class="modal-content">
-            <h3 id="task-title" style="color:var(--yellow);">Verifying Task...</h3>
-            <p id="task-desc">Please complete the task and wait for the timer to finish to claim points.</p>
-            <div id="task-timer" style="font-size: 2em; font-weight: bold; margin: 15px 0;">30s</div>
-            <button id="claim-btn" class="verify-btn" style="display:none;" onclick="claimTaskReward()">CLAIM POINTS</button>
-            <button onclick="closeModal('task-modal')" style="background:transparent; color:red; border:none; margin-top:10px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
-
-    <div id="withdraw-modal" class="modal">
-        <div class="modal-content">
-            <h2>Withdraw</h2>
-            <input type="number" id="w-amount" placeholder="Min 4000" style="width:90%; padding:10px; margin-bottom:10px;">
-            <button class="verify-btn" onclick="processWithdraw()">Submit</button>
-            <button onclick="closeModal('withdraw-modal')" style="background:red; color:white; border:none; padding:10px; width:100%; border-radius:8px; margin-top:5px;">Close</button>
+            <h3 id="task-title" style="color:var(--yellow);">Verify Subscribtion</h3>
+            <p id="task-desc">1. Go to YouTube & Subscribe.<br>2. Find the <b>Secret Code</b> in the video.<br>3. Enter it below to claim points.</p>
+            
+            <input type="text" id="secret-code-input" placeholder="Enter Secret Code Here">
+            
+            <div id="task-timer" style="font-size: 1.5em; margin: 10px;">Waiting 30s...</div>
+            <button id="verify-task-btn" class="claim-btn" style="display:none;" onclick="validateSecretCode()">VERIFY & CLAIM</button>
+            <button onclick="closeModal('task-modal')" style="color:red; background:none; border:none; margin-top:20px;">Cancel</button>
         </div>
     </div>
 
     <script>
         let points = parseInt(localStorage.getItem('userPoints')) || 0;
-        let currentTask = "";
         document.getElementById('points').innerText = points.toLocaleString();
 
-        function updatePoints(amt) {
-            points += amt;
-            localStorage.setItem('userPoints', points);
-            document.getElementById('points').innerText = points.toLocaleString();
-            updateHistory();
-        }
+        // ⚠️ මෙතනට ඔයා කැමති Secret Code එකක් දාන්න (වීඩියෝ එකේ පේන්න දාන එක)
+        const YT_SECRET = "LAHI77"; 
+        const REF_SECRET = "SHARE10"; // මේක Referral වලට
 
-        // 1. Monetag Ad Cooldown
-        function watchAd() {
-            if (typeof show_10837568 === 'function') {
-                show_10837568('pop').then(() => {
-                    updatePoints(100);
-                    startAdCooldown();
-                });
-            }
-        }
-
-        function startAdCooldown() {
-            const btn = document.getElementById('adBtn');
-            const txt = document.getElementById('adText');
-            btn.disabled = true;
-            let timer = 10;
-            let interval = setInterval(() => {
-                txt.innerText = `Wait ${timer}s`;
-                timer--;
-                if(timer < 0) { clearInterval(interval); btn.disabled = false; txt.innerText = "Watch Ad (+100)"; }
-            }, 1000);
-        }
-
-        // 2. Security Task System (YouTube/Referral)
         function startTask(type) {
-            currentTask = type;
             let url = (type === 'yt') ? "https://youtube.com/@hiruwaofficial-b2i?si=uwmmXfFRkSkP0rQ3" : "https://t.me/share/url?url=https://t.me/hiru1397bot&text=Join Now!";
-            
             window.open(url, "_blank");
+            
+            document.getElementById('secret-code-input').value = "";
+            document.getElementById('verify-task-btn').style.display = 'none';
+            document.getElementById('task-timer').style.display = 'block';
             openModal('task-modal');
 
-            let timer = (type === 'yt') ? 30 : 20; // YT 30s, Ref 20s
-            document.getElementById('claim-btn').style.display = 'none';
-            document.getElementById('task-timer').style.display = 'block';
-
+            let timer = 30;
             let interval = setInterval(() => {
-                document.getElementById('task-timer').innerText = timer + "s";
+                document.getElementById('task-timer').innerText = `Wait ${timer}s to Verify...`;
                 timer--;
                 if(timer < 0) {
                     clearInterval(interval);
                     document.getElementById('task-timer').style.display = 'none';
-                    document.getElementById('claim-btn').style.display = 'block';
+                    document.getElementById('verify-task-btn').style.display = 'block';
                 }
             }, 1000);
+            
+            window.activeTask = type;
         }
 
-        function claimTaskReward() {
-            if(currentTask === 'yt') {
-                updatePoints(250);
-                localStorage.setItem('yt_done', 'true');
-                document.getElementById('ytBtn').disabled = true;
-            } else if(currentTask === 'ref') {
-                updatePoints(150);
+        function validateSecretCode() {
+            let input = document.getElementById('secret-code-input').value.trim().toUpperCase();
+            let correctCode = (window.activeTask === 'yt') ? YT_SECRET : REF_SECRET;
+
+            if(input === correctCode) {
+                let amt = (window.activeTask === 'yt') ? 250 : 150;
+                points += amt;
+                localStorage.setItem('userPoints', points);
+                document.getElementById('points').innerText = points.toLocaleString();
+                alert("Success! Points Added.");
+                closeModal('task-modal');
+            } else {
+                alert("Wrong Secret Code! Watch the video carefully.");
             }
-            alert("Reward Claimed!");
-            closeModal('task-modal');
         }
 
-        function claimDaily() {
-            let today = new Date().toDateString();
-            if(localStorage.getItem('lastDaily') === today) return alert("Come back tomorrow!");
-            updatePoints(50);
-            localStorage.setItem('lastDaily', today);
+        function watchAd() {
+            if (typeof show_10837568 === 'function') {
+                show_10837568('pop').then(() => {
+                    points += 100;
+                    localStorage.setItem('userPoints', points);
+                    document.getElementById('points').innerText = points.toLocaleString();
+                });
+            }
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function processWithdraw() {
-            let amt = parseInt(document.getElementById('w-amount').value);
-            if(amt < 4000 || amt > points) return alert("Invalid Amount!");
-            points -= amt;
-            updatePoints(0);
-            alert("Withdraw Requested!");
-            closeModal('withdraw-modal');
-        }
-
-        function updateHistory() {
-            let h = document.getElementById('user-history');
-            h.innerHTML = `Points updated: ${new Date().toLocaleTimeString()}`;
-        }
     </script>
 </body>
 </html>
