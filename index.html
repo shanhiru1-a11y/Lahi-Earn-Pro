@@ -1,1 +1,65 @@
-<script src='//libtl.com/sdk.js' data-zone='10837568' data-sdk='show_10837568'></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lahi Earn Pro</title>
+
+    <script src='//libtl.com/sdk.js' data-zone='10837568' data-sdk='show_10837568'></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; text-align: center; padding: 20px; }
+        .container { background: #1e1e1e; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 400px; margin: auto; }
+        #balance { font-size: 2.5em; color: #00ff88; margin: 10px 0; font-weight: bold; }
+        .btn-earn { background: linear-gradient(45deg, #ffcc00, #ff9500); border: none; color: black; padding: 15px 30px; font-size: 1.1em; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 149, 0, 0.3); }
+        .btn-earn:active { transform: scale(0.96); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Lahi Earn Pro</h2>
+        <p>Your Current Balance</p>
+        <div id="balance">0</div>
+        <p>Points</p>
+        
+        <br>
+        
+        <button class="btn-earn" onclick="showRewardAd()">WATCH AD & EARN 100</button>
+    </div>
+
+    <script>
+        // ලකුණු ප්‍රමාණය Load කරගැනීම
+        let points = parseInt(localStorage.getItem('userPoints')) || 0;
+        document.getElementById('balance').innerText = points;
+
+        function showRewardAd() {
+            // ඔයා එවපු 'Rewarded Popup' Code එක මෙන්න මෙතන තියෙනවා
+            if (typeof show_10837568 === 'function') {
+                
+                show_10837568('pop').then(() => {
+                    // ඇඩ් එක සාර්ථකව බලලා ඉවර වුණාම ලකුණු 100 දෙනවා
+                    addPoints(100);
+                }).catch(e => {
+                    // ඇඩ් එකේ මොකක් හරි error එකක් ආවොත්
+                    console.error("Ad Error: ", e);
+                    alert("Ad not available yet. Please try again in 5 seconds.");
+                });
+
+            } else {
+                alert("Ads are loading... Please wait.");
+            }
+        }
+
+        function addPoints(amount) {
+            points += amount;
+            localStorage.setItem('userPoints', points);
+            document.getElementById('balance').innerText = points;
+            
+            // සාර්ථකයි කියලා message එකක්
+            alert("Success! +100 Points Added.");
+        }
+    </script>
+
+</body>
+</html>
