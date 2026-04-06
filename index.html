@@ -4,60 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lahi Earn Pro</title>
-
+    
     <script src='//libtl.com/sdk.js' data-zone='10837568' data-sdk='show_10837568'></script>
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; text-align: center; padding: 20px; }
-        .container { background: #1e1e1e; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 400px; margin: auto; }
-        #balance { font-size: 2.5em; color: #00ff88; margin: 10px 0; font-weight: bold; }
-        .btn-earn { background: linear-gradient(45deg, #ffcc00, #ff9500); border: none; color: black; padding: 15px 30px; font-size: 1.1em; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 149, 0, 0.3); }
-        .btn-earn:active { transform: scale(0.96); }
+        /* Oyaage Original Design eka (Wenas kale naha) */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .balance-container {
+            background-color: #111;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #ffd700;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+        #points {
+            font-size: 3rem;
+            color: #ffd700;
+            margin: 10px 0;
+        }
+        .btn-ad {
+            background-color: #ffd700;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-ad:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Lahi Earn Pro</h2>
-        <p>Your Current Balance</p>
-        <div id="balance">0</div>
-        <p>Points</p>
-        
-        <br>
-        
-        <button class="btn-earn" onclick="showRewardAd()">WATCH AD & EARN 100</button>
+    <div class="balance-container">
+        <h3>TOTAL POINTS</h3>
+        <div id="points">0</div>
+        <button class="btn-ad" onclick="watchAd()">WATCH AD (+100)</button>
     </div>
 
     <script>
-        // ලකුණු ප්‍රමාණය Load කරගැනීම
-        let points = parseInt(localStorage.getItem('userPoints')) || 0;
-        document.getElementById('balance').innerText = points;
+        // Points system (LocalStorage use karanne points save wenna)
+        let userPoints = parseInt(localStorage.getItem('userPoints')) || 0;
+        document.getElementById('points').innerText = userPoints;
 
-        function showRewardAd() {
-            // ඔයා එවපු 'Rewarded Popup' Code එක මෙන්න මෙතන තියෙනවා
+        function watchAd() {
+            // 2. OYA EWAPU REWARDED POPUP LOGIC EKA
             if (typeof show_10837568 === 'function') {
                 
                 show_10837568('pop').then(() => {
-                    // ඇඩ් එක සාර්ථකව බලලා ඉවර වුණාම ලකුණු 100 දෙනවා
+                    // User ad eka balala iwara unama meka wenawa
                     addPoints(100);
                 }).catch(e => {
-                    // ඇඩ් එකේ මොකක් හරි error එකක් ආවොත්
-                    console.error("Ad Error: ", e);
-                    alert("Ad not available yet. Please try again in 5 seconds.");
+                    // Ad error ekak awoth
+                    console.error("Ad error:", e);
+                    alert("Ad not available. Try again in a bit!");
                 });
 
             } else {
-                alert("Ads are loading... Please wait.");
+                alert("Ads are initializing. Please wait...");
             }
         }
 
         function addPoints(amount) {
-            points += amount;
-            localStorage.setItem('userPoints', points);
-            document.getElementById('balance').innerText = points;
-            
-            // සාර්ථකයි කියලා message එකක්
-            alert("Success! +100 Points Added.");
+            userPoints += amount;
+            localStorage.setItem('userPoints', userPoints);
+            document.getElementById('points').innerText = userPoints;
+            alert("Congratulations! 100 points added.");
         }
     </script>
 
