@@ -9,107 +9,205 @@
 
     <style>
         :root { --bg-blue: #001f3f; --yellow: #ffd700; --white: #ffffff; }
-        body { background-color: var(--bg-blue); color: var(--white); font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
+        body { background-color: var(--bg-blue); color: var(--white); font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
+        
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .balance-card { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; border: 2px solid var(--yellow); margin-bottom: 20px; }
+        .balance-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; border: 2px solid var(--yellow); margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
         #points { font-size: 3.5em; color: var(--yellow); font-weight: 900; }
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; font-size: 0.9em; }
+        .action-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
+        .icon { font-size: 24px; margin-bottom: 8px; }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); padding: 25px; z-index: 2000; box-sizing: border-box; }
-        .modal-content { background: #111; padding: 20px; border-radius: 15px; border: 1px solid var(--yellow); margin-top: 30px; }
-        input { width: 90%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var(--yellow); background: #222; color: white; text-align: center; font-size: 1.2em; }
-        .claim-btn { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .modal-content { background: #111; padding: 20px; border-radius: 15px; border: 1px solid var(--yellow); margin-top: 40px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--yellow); background: #222; color: white; text-align: center; box-sizing: border-box; }
+        .verify-btn { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        #history-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; text-align: left; font-size: 0.8em; margin-top: 10px; border: 1px solid #333; max-height: 120px; overflow-y: auto; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="balance-card">
-            <p>Your Balance</p>
+            <p style="margin:0; opacity: 0.8;">Total Balance</p>
             <div id="points">0</div>
-            <p>POINTS</p>
+            <p style="margin:0; font-weight: bold;">POINTS</p>
         </div>
 
         <div class="grid-menu">
-            <button class="action-btn" onclick="watchAd()">📺 Watch Ad</button>
-            <button class="action-btn" onclick="startTask('yt')">🔴 YouTube (+250)</button>
-            <button class="action-btn" onclick="startTask('ref')">👥 Invite (+150)</button>
-            <button class="action-btn" onclick="openModal('withdraw-modal')">💸 Withdraw</button>
+            <button class="action-btn" id="adBtn" onclick="watchAd()">
+                <span class="icon">📺</span> <span id="adText">Watch Ad (+100)</span>
+            </button>
+
+            <button class="action-btn" onclick="claimDaily()">
+                <span class="icon">🎁</span> Daily Bonus
+            </button>
+
+            <button class="action-btn" onclick="openModal('withdraw-modal')">
+                <span class="icon">💸</span> Withdraw
+            </button>
+
+            <button class="action-btn" onclick="startTask('ref')">
+                <span class="icon">👥</span> Invite (+150)
+            </button>
+
+            <button class="action-btn" id="ytBtn" onclick="startTask('yt')">
+                <span class="icon">🔴</span> YouTube (+250)
+            </button>
+
+            <button class="action-btn" onclick="window.open('https://t.me/hiru1397bot')">
+                <span class="icon">🎧</span> Support
+            </button>
+        </div>
+
+        <h4 style="text-align:left; color:var(--yellow); margin-bottom:5px;">History</h4>
+        <div id="history-box">No transactions yet.</div>
+
+        <p style="margin-top:20px; font-size: 0.8em; opacity: 0.6;">📊 Total Users: <span id="user-count">0</span></p>
+        <div style="opacity: 0.05; font-size: 8px;" onclick="openAdmin()">ADMIN</div>
+    </div>
+
+    <div id="verify-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="v-title" style="color:var(--yellow);">Verify Task</h3>
+            <p id="v-desc">Enter the Secret Code to claim points.</p>
+            <input type="text" id="v-input" placeholder="Enter Code Here">
+            <div id="v-timer" style="font-size: 1.5em; font-weight: bold; margin: 10px;">30s</div>
+            <button id="v-claim-btn" class="verify-btn" style="display:none;" onclick="checkSecretCode()">CLAIM POINTS</button>
+            <button onclick="closeModal('verify-modal')" style="background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
-    <div id="task-modal" class="modal">
+    <div id="withdraw-modal" class="modal">
         <div class="modal-content">
-            <h3 id="task-title" style="color:var(--yellow);">Verify Subscribtion</h3>
-            <p id="task-desc">1. Go to YouTube & Subscribe.<br>2. Find the <b>Secret Code</b> in the video.<br>3. Enter it below to claim points.</p>
-            
-            <input type="text" id="secret-code-input" placeholder="Enter Secret Code Here">
-            
-            <div id="task-timer" style="font-size: 1.5em; margin: 10px;">Waiting 30s...</div>
-            <button id="verify-task-btn" class="claim-btn" style="display:none;" onclick="validateSecretCode()">VERIFY & CLAIM</button>
-            <button onclick="closeModal('task-modal')" style="color:red; background:none; border:none; margin-top:20px;">Cancel</button>
+            <h2 style="color:var(--yellow);">Withdraw</h2>
+            <select id="method">
+                <option>Bank Transfer</option>
+                <option>Binance (USDT)</option>
+                <option>eZ Cash / mCash</option>
+            </select>
+            <input type="number" id="w-amount" placeholder="Min 4000 Points">
+            <button class="verify-btn" onclick="processWithdraw()">Submit Request</button>
+            <button onclick="closeModal('withdraw-modal')" style="background:none; color:red; border:none; margin-top:10px; cursor:pointer;">Close</button>
         </div>
     </div>
 
     <script>
+        // --- Core Logic ---
         let points = parseInt(localStorage.getItem('userPoints')) || 0;
         document.getElementById('points').innerText = points.toLocaleString();
 
-        // ⚠️ මෙතනට ඔයා කැමති Secret Code එකක් දාන්න (වීඩියෝ එකේ පේන්න දාන එක)
-        const YT_SECRET = "LAHI77"; 
-        const REF_SECRET = "SHARE10"; // මේක Referral වලට
+        const YT_CODE = "LAHI77"; 
+        const REF_CODE = "JOIN150";
+        let activeTaskType = "";
 
-        function startTask(type) {
-            let url = (type === 'yt') ? "https://youtube.com/@hiruwaofficial-b2i?si=uwmmXfFRkSkP0rQ3" : "https://t.me/share/url?url=https://t.me/hiru1397bot&text=Join Now!";
-            window.open(url, "_blank");
-            
-            document.getElementById('secret-code-input').value = "";
-            document.getElementById('verify-task-btn').style.display = 'none';
-            document.getElementById('task-timer').style.display = 'block';
-            openModal('task-modal');
-
-            let timer = 30;
-            let interval = setInterval(() => {
-                document.getElementById('task-timer').innerText = `Wait ${timer}s to Verify...`;
-                timer--;
-                if(timer < 0) {
-                    clearInterval(interval);
-                    document.getElementById('task-timer').style.display = 'none';
-                    document.getElementById('verify-task-btn').style.display = 'block';
-                }
-            }, 1000);
-            
-            window.activeTask = type;
+        // --- Real User Count ---
+        let totalUsers = parseInt(localStorage.getItem('total_user_count')) || 0;
+        if (!localStorage.getItem('user_registered')) {
+            totalUsers += 1;
+            localStorage.setItem('total_user_count', totalUsers);
+            localStorage.setItem('user_registered', 'true');
         }
+        document.getElementById('user-count').innerText = totalUsers.toLocaleString();
 
-        function validateSecretCode() {
-            let input = document.getElementById('secret-code-input').value.trim().toUpperCase();
-            let correctCode = (window.activeTask === 'yt') ? YT_SECRET : REF_SECRET;
-
-            if(input === correctCode) {
-                let amt = (window.activeTask === 'yt') ? 250 : 150;
-                points += amt;
-                localStorage.setItem('userPoints', points);
-                document.getElementById('points').innerText = points.toLocaleString();
-                alert("Success! Points Added.");
-                closeModal('task-modal');
-            } else {
-                alert("Wrong Secret Code! Watch the video carefully.");
-            }
-        }
-
+        // --- Ad Cooldown Logic ---
         function watchAd() {
             if (typeof show_10837568 === 'function') {
                 show_10837568('pop').then(() => {
-                    points += 100;
-                    localStorage.setItem('userPoints', points);
-                    document.getElementById('points').innerText = points.toLocaleString();
+                    updatePoints(100, "Ad Reward");
+                    startAdCooldown();
                 });
             }
         }
 
+        function startAdCooldown() {
+            const btn = document.getElementById('adBtn');
+            const txt = document.getElementById('adText');
+            btn.disabled = true;
+            let timer = 10;
+            let interval = setInterval(() => {
+                txt.innerText = `Wait ${timer}s`;
+                timer--;
+                if(timer < 0) { clearInterval(interval); btn.disabled = false; txt.innerText = "Watch Ad (+100)"; }
+            }, 1000);
+        }
+
+        // --- Task System (YouTube & Ref) ---
+        function startTask(type) {
+            activeTaskType = type;
+            let url = (type === 'yt') ? "https://youtube.com/@hiruwaofficial-b2i?si=uwmmXfFRkSkP0rQ3" : "https://t.me/share/url?url=https://t.me/hiru1397bot&text=Join Now!";
+            
+            window.open(url, "_blank");
+            openModal('verify-modal');
+
+            document.getElementById('v-title').innerText = (type === 'yt') ? "YouTube Verification" : "Invite Verification";
+            document.getElementById('v-desc').innerText = (type === 'yt') ? "Find the Secret Code in the video." : "Enter the code received from the person who joined.";
+            document.getElementById('v-input').value = "";
+            document.getElementById('v-claim-btn').style.display = 'none';
+            document.getElementById('v-timer').style.display = 'block';
+
+            let timer = (type === 'yt') ? 30 : 15;
+            let interval = setInterval(() => {
+                document.getElementById('v-timer').innerText = `Verifying... ${timer}s`;
+                timer--;
+                if(timer < 0) {
+                    clearInterval(interval);
+                    document.getElementById('v-timer').style.display = 'none';
+                    document.getElementById('v-claim-btn').style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        function checkSecretCode() {
+            let input = document.getElementById('v-input').value.trim().toUpperCase();
+            let correct = (activeTaskType === 'yt') ? YT_CODE : REF_CODE;
+
+            if(input === correct) {
+                let reward = (activeTaskType === 'yt') ? 250 : 150;
+                updatePoints(reward, activeTaskType.toUpperCase() + " Task");
+                alert("Verified! Points Added.");
+                closeModal('verify-modal');
+                if(activeTaskType === 'yt') document.getElementById('ytBtn').disabled = true;
+            } else {
+                alert("Wrong Secret Code! Please try again.");
+            }
+        }
+
+        function claimDaily() {
+            let today = new Date().toDateString();
+            if(localStorage.getItem('lastDaily') === today) return alert("Already claimed today!");
+            updatePoints(50, "Daily Bonus");
+            localStorage.setItem('lastDaily', today);
+        }
+
+        function updatePoints(amt, reason) {
+            points += amt;
+            localStorage.setItem('userPoints', points);
+            document.getElementById('points').innerText = points.toLocaleString();
+            saveHistory(reason, amt);
+        }
+
+        function saveHistory(reason, amt) {
+            let box = document.getElementById('history-box');
+            let time = new Date().toLocaleTimeString();
+            box.innerHTML = `<div>✅ ${reason}: +${amt} (${time})</div>` + box.innerHTML;
+        }
+
+        function processWithdraw() {
+            let amt = parseInt(document.getElementById('w-amount').value);
+            if(amt < 4000 || amt > points) return alert("Insufficient points or below 4000!");
+            points -= amt;
+            updatePoints(0, "Withdrawal Requested");
+            alert("Success! Request sent to Admin.");
+            closeModal('withdraw-modal');
+        }
+
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function openAdmin() { if(prompt("Pass:") === "ADMIN4053") alert("Admin Dashboard Locked to Device Database."); }
     </script>
 </body>
 </html>
