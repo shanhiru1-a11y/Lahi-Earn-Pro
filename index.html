@@ -7,21 +7,26 @@
     
     <style>
         :root { --bg-blue: #001f3f; --yellow: #ffd700; --white: #ffffff; }
-        body { background-color: var(--bg-blue); color: var(--white); font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
+        body { background-color: var(--bg-blue); color: var(--white); font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
         
-        /* Splash Screen */
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-blue); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease; pointer-events: none; }
-        .logo-anim { width: 80px; height: 80px; background: var(--yellow); border-radius: 20px; animation: bounce 1.5s infinite; margin-bottom: 10px; box-shadow: 0 0 20px var(--yellow); }
+        /* --- 100% Fix Splash --- */
+        #splash { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--bg-blue); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 9999; 
+            transition: 0.8s ease; pointer-events: none;
+        }
+        .logo-anim { width: 80px; height: 80px; background: var(--yellow); border-radius: 20px; animation: bounce 1.5s infinite; box-shadow: 0 0 20px var(--yellow); }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
         /* Main UI */
-        .container { padding: 15px; max-width: 500px; margin: auto; visibility: hidden; } /* Hidden until splash ends */
+        .container { padding: 15px; max-width: 500px; margin: auto; position: relative; z-index: 1; }
         .balance-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; border: 2px solid var(--yellow); margin-bottom: 20px; }
         #points { font-size: 3.5em; color: var(--yellow); font-weight: 900; }
         
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .action-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
+        .action-btn:disabled { background: #555; color: #888; }
         .icon { font-size: 24px; margin-bottom: 8px; }
 
         /* Modals */
@@ -38,11 +43,11 @@
 
     <div id="splash">
         <div class="logo-anim"></div>
-        <h1 style="color: var(--yellow); margin: 0;">Lahi Earn Pro</h1>
+        <h1 style="color: var(--yellow); margin: 10px 0 0 0;">Lahi Earn Pro</h1>
         <p style="opacity: 0.7;">Fastest Way to Earn</p>
     </div>
 
-    <div id="main-content" class="container">
+    <div class="container">
         <div class="balance-card">
             <p style="margin:0; opacity: 0.8;">Total Balance</p>
             <div id="points">0</div>
@@ -74,9 +79,9 @@
 
     <div id="proof-modal" class="modal"><div class="modal-content"><h2 style="color:var(--yellow); margin-top:0;">Payment Proofs</h2><div class="proof-item"><span class="status-tag">Paid ✅</span><strong>9477****21</strong><span>Rs. 450 (mCash)</span></div><div class="proof-item"><span class="status-tag">Paid ✅</span><strong>9471****88</strong><span>Rs. 520 (Bank)</span></div><button onclick="closeModal('proof-modal')" style="background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Close</button></div></div>
 
-    <div id="withdraw-modal" class="modal"><div class="modal-content"><h2 style="color:var(--yellow); margin-top:0;">Withdraw</h2><p style="color:#2ecc71; font-weight:bold; margin-bottom:10px;">💰 4,000 Points = Rs. 400</p><select id="method"><option value="Bank">Bank Transfer</option><option value="Binance">Binance</option><option value="mCash">eZ Cash / mCash</option></select><input type="text" id="w-details" placeholder="Account No"><input type="number" id="w-amount" placeholder="Min 4000"><button class="verify-btn" onclick="processWithdraw()">Send Request</button><button onclick="closeModal('withdraw-modal')" style="background:none; color:red; border:none; margin-top:10px;">Close</button></div></div>
+    <div id="withdraw-modal" class="modal"><div class="modal-content"><h2 style="color:var(--yellow); margin-top:0;">Withdraw</h2><p style="color:#2ecc71; font-weight:bold; margin-bottom:10px;">💰 4,000 Points = Rs. 400</p><select id="method"><option value="Bank">Bank Transfer</option><option value="Binance">Binance</option><option value="mCash">eZ Cash / mCash</option></select><input type="text" id="w-details" placeholder="Account Details"><input type="number" id="w-amount" placeholder="Points"><button class="verify-btn" onclick="processWithdraw()">Send Request</button><button onclick="closeModal('withdraw-modal')" style="background:none; color:red; border:none; margin-top:10px;">Close</button></div></div>
 
-    <div id="verify-modal" class="modal"><div class="modal-content"><h3 id="v-title">Verify</h3><input type="text" id="v-input" placeholder="Enter Code"><div id="v-timer" style="font-size: 1.2em; margin: 10px;">30s</div><button id="v-claim-btn" class="verify-btn" style="display:none;" onclick="checkSecretCode()">Claim Points</button><button onclick="closeModal('verify-modal')" style="background:none; color:red; border:none; margin-top:10px;">Cancel</button></div></div>
+    <div id="verify-modal" class="modal"><div class="modal-content"><h3>Verify Task</h3><input type="text" id="v-input" placeholder="Enter Code"><div id="v-timer">30s</div><button id="v-claim-btn" class="verify-btn" style="display:none;" onclick="checkSecretCode()">Claim Points</button><button onclick="closeModal('verify-modal')" style="background:none; color:red; border:none; margin-top:10px;">Cancel</button></div></div>
 
     <script src='//libtl.com/sdk.js' data-zone='10837568' data-sdk='show_10837568' async></script>
 
@@ -86,34 +91,29 @@
         const YT_CODE = "LAHI77"; const REF_CODE = "JOIN150";
 
         let points = parseInt(localStorage.getItem('userPoints')) || 0;
+        document.getElementById('points').innerText = points.toLocaleString();
 
-        // Splash handling - Force hide after 2.5s
-        document.addEventListener("DOMContentLoaded", function() {
-            updateUI();
-            setTimeout(hideSplash, 2500);
+        // --- NEW SPLASH FIX ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const sp = document.getElementById('splash');
+                sp.style.opacity = '0';
+                setTimeout(() => { sp.style.display = 'none'; }, 800);
+            }, 2500);
         });
 
-        function hideSplash() {
-            const splash = document.getElementById('splash');
-            const main = document.getElementById('main-content');
-            splash.style.opacity = '0';
-            main.style.visibility = 'visible';
-            setTimeout(() => { splash.style.display = 'none'; }, 600);
-        }
+        // Points
+        function updateUI() { localStorage.setItem('userPoints', points); document.getElementById('points').innerText = points.toLocaleString(); }
 
-        function updateUI() { 
-            localStorage.setItem('userPoints', points); 
-            document.getElementById('points').innerText = points.toLocaleString(); 
-        }
-
-        function watchAd() { if (typeof show_10837568 === 'function') { show_10837568('pop').then(() => { points += 100; updateUI(); startAdCooldown(); }); } else { alert("Ad not ready. Try again!"); } }
-        
+        // Ads
+        function watchAd() { if (typeof show_10837568 === 'function') { show_10837568('pop').then(() => { points += 100; updateUI(); startAdCooldown(); }); } else { alert("Please wait..."); } }
         function startAdCooldown() {
             const btn = document.getElementById('adBtn'); const txt = document.getElementById('adText');
             btn.disabled = true; let timer = 10;
             let interval = setInterval(() => { txt.innerText = `Wait ${timer}s`; timer--; if(timer < 0) { clearInterval(interval); btn.disabled = false; txt.innerText = "Watch Ad (+100)"; } }, 1000);
         }
 
+        // Tasks
         function startTask(type) {
             activeTaskType = type;
             window.open((type === 'yt') ? "https://youtube.com/@hiruwaofficial-b2i" : "https://t.me/share/url?url=https://t.me/hiru1397bot", "_blank");
@@ -125,34 +125,3 @@
 
         function checkSecretCode() {
             let input = document.getElementById('v-input').value.trim().toUpperCase();
-            let correct = (activeTaskType === 'yt') ? YT_CODE : REF_CODE;
-            if(input === correct) { points += (activeTaskType === 'yt') ? 250 : 150; updateUI(); alert("Success!"); closeModal('verify-modal'); }
-            else { alert("Wrong Code!"); }
-        }
-
-        function processWithdraw() {
-            let amt = parseInt(document.getElementById('w-amount').value);
-            let details = document.getElementById('w-details').value;
-            if(amt < 4000 || amt > points || !details) return alert("Check Balance / Details!");
-            let cash = (amt / 4000) * 400;
-            let msg = `💰 *New Withdrawal!*%0A💵 Amount: ${amt} Points (Rs. ${cash})%0A💳 Method: ${document.getElementById('method').value}%0A📝 Details: ${details}`;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${msg}&parse_mode=Markdown`)
-            .then(() => { points -= amt; updateUI(); alert("Sent to Admin!"); closeModal('withdraw-modal'); });
-        }
-
-        function claimDaily() {
-            let today = new Date().toDateString();
-            if(localStorage.getItem('lastDaily') === today) return alert("Already claimed!");
-            points += 50; updateUI(); localStorage.setItem('lastDaily', today);
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'block'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        // User count registration
-        let totalUsers = parseInt(localStorage.getItem('total_user_count')) || 250;
-        if (!localStorage.getItem('user_registered')) { totalUsers += 1; localStorage.setItem('total_user_count', totalUsers); localStorage.setItem('user_registered', 'true'); }
-        document.getElementById('user-count').innerText = totalUsers.toLocaleString();
-    </script>
-</body>
-</html>
