@@ -11,7 +11,7 @@
         :root { --bg-blue: #001f3f; --yellow: #ffd700; --white: #ffffff; }
         body { background-color: var(--bg-blue); color: var(--white); font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
         
-        /* --- Welcome Page (Splash) --- */
+        /* Splash Screen */
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-blue); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s; }
         .logo-anim { width: 80px; height: 80px; background: var(--yellow); border-radius: 20px; animation: bounce 1.5s infinite; margin-bottom: 10px; box-shadow: 0 0 20px var(--yellow); }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
@@ -22,7 +22,7 @@
         #points { font-size: 3.5em; color: var(--yellow); font-weight: 900; }
         
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
+        .action-btn { background: var(--yellow); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .action-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
         .icon { font-size: 24px; margin-bottom: 8px; }
 
@@ -32,9 +32,8 @@
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--yellow); background: #111; color: white; text-align: center; }
         .verify-btn { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* Proofs List Style */
+        /* Proofs */
         .proof-item { background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px; text-align: left; border-left: 4px solid #2ecc71; }
-        .proof-item span { display: block; font-size: 0.8em; opacity: 0.7; }
         .status-tag { color: #2ecc71; font-weight: bold; float: right; }
     </style>
 </head>
@@ -74,39 +73,15 @@
             </button>
         </div>
 
-        <p style="margin-top:20px; font-size: 0.8em; opacity: 0.6;">📊 Users Joined: <span id="user-count">0</span></p>
+        <p style="margin-top:20px; font-size: 0.8em; opacity: 0.6;">📊 Total Users: <span id="user-count">0</span></p>
     </div>
 
     <div id="proof-modal" class="modal">
         <div class="modal-content">
-            <h2 style="color:var(--yellow); margin-top:0;">Transaction Proofs</h2>
-            <p style="font-size:0.8em; opacity:0.7;">Recent successful payouts</p>
-            <div id="proof-list">
-                <div class="proof-item">
-                    <span class="status-tag">Success ✅</span>
-                    <strong>User: 9477****21</strong>
-                    <span>Amount: 4500 Points (mCash)</span>
-                    <span>Date: Today, 08:15 AM</span>
-                </div>
-                <div class="proof-item">
-                    <span class="status-tag">Success ✅</span>
-                    <strong>User: 9471****88</strong>
-                    <span>Amount: 5200 Points (Bank)</span>
-                    <span>Date: Today, 07:45 AM</span>
-                </div>
-                <div class="proof-item">
-                    <span class="status-tag">Success ✅</span>
-                    <strong>User: 9476****04</strong>
-                    <span>Amount: 4000 Points (mCash)</span>
-                    <span>Date: Yesterday</span>
-                </div>
-                <div class="proof-item">
-                    <span class="status-tag">Success ✅</span>
-                    <strong>User: User_8422</strong>
-                    <span>Amount: 8000 Points (Binance)</span>
-                    <span>Date: Yesterday</span>
-                </div>
-            </div>
+            <h2 style="color:var(--yellow); margin-top:0;">Payment Proofs</h2>
+            <div class="proof-item"><span class="status-tag">Paid ✅</span><strong>9477****21</strong><span>Rs. 450 (mCash)</span></div>
+            <div class="proof-item"><span class="status-tag">Paid ✅</span><strong>9471****88</strong><span>Rs. 520 (Bank)</span></div>
+            <div class="proof-item"><span class="status-tag">Paid ✅</span><strong>9476****04</strong><span>Rs. 400 (eZ Cash)</span></div>
             <button onclick="closeModal('proof-modal')" style="background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Close</button>
         </div>
     </div>
@@ -114,6 +89,7 @@
     <div id="withdraw-modal" class="modal">
         <div class="modal-content">
             <h2 style="color:var(--yellow); margin-top:0;">Withdraw</h2>
+            <p style="color:#2ecc71; font-weight:bold; margin-bottom:10px;">💰 Rate: 4,000 Points = Rs. 400</p>
             <select id="method">
                 <option value="Bank Transfer">Bank Transfer</option>
                 <option value="Binance (USDT)">Binance (USDT)</option>
@@ -128,11 +104,11 @@
 
     <div id="verify-modal" class="modal">
         <div class="modal-content">
-            <h3 id="v-title" style="color:var(--yellow);">Verify Task</h3>
-            <input type="text" id="v-input" placeholder="Secret Code Here">
-            <div id="v-timer" style="font-size: 1.5em; font-weight: bold; margin: 10px;">30s</div>
-            <button id="v-claim-btn" class="verify-btn" style="display:none;" onclick="checkSecretCode()">CLAIM POINTS</button>
-            <button onclick="closeModal('verify-modal')" style="background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Cancel</button>
+            <h3 id="v-title" style="color:var(--yellow);">Verify</h3>
+            <input type="text" id="v-input" placeholder="Enter Secret Code">
+            <div id="v-timer" style="font-size: 1.2em; margin: 10px;">30s</div>
+            <button id="v-claim-btn" class="verify-btn" style="display:none;" onclick="checkSecretCode()">Claim Points</button>
+            <button onclick="closeModal('verify-modal')" style="background:none; color:red; border:none; margin-top:10px;">Cancel</button>
         </div>
     </div>
 
@@ -147,13 +123,7 @@
         setTimeout(() => { document.getElementById('splash').style.opacity = '0'; 
         setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 800); }, 2500);
 
-        function updatePoints(amt) {
-            points += amt;
-            localStorage.setItem('userPoints', points);
-            document.getElementById('points').innerText = points.toLocaleString();
-        }
-
-        function watchAd() { if (typeof show_10837568 === 'function') { show_10837568('pop').then(() => { updatePoints(100); startAdCooldown(); }); } }
+        function watchAd() { if (typeof show_10837568 === 'function') { show_10837568('pop').then(() => { points += 100; updateUI(); startAdCooldown(); }); } }
         function startAdCooldown() {
             const btn = document.getElementById('adBtn'); const txt = document.getElementById('adText');
             btn.disabled = true; let timer = 10;
@@ -172,7 +142,7 @@
         function checkSecretCode() {
             let input = document.getElementById('v-input').value.trim().toUpperCase();
             let correct = (activeTaskType === 'yt') ? YT_CODE : REF_CODE;
-            if(input === correct) { updatePoints((activeTaskType === 'yt') ? 250 : 150); alert("Success!"); closeModal('verify-modal'); if(activeTaskType === 'yt') document.getElementById('ytBtn').disabled = true; }
+            if(input === correct) { points += (activeTaskType === 'yt') ? 250 : 150; updateUI(); alert("Success!"); closeModal('verify-modal'); }
             else { alert("Wrong Code!"); }
         }
 
@@ -180,23 +150,22 @@
             let amt = parseInt(document.getElementById('w-amount').value);
             let details = document.getElementById('w-details').value;
             if(amt < 4000 || amt > points || !details) return alert("Check Balance / Details!");
-            let msg = `💰 *Withdrawal Request!*%0A💵 Amount: ${amt}%0A💳 Method: ${document.getElementById('method').value}%0A📝 Details: ${details}`;
+            let cash = (amt / 4000) * 400;
+            let msg = `💰 *New Withdrawal!*%0A💵 Amount: ${amt} Points (Rs. ${cash})%0A💳 Method: ${document.getElementById('method').value}%0A📝 Details: ${details}`;
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${msg}&parse_mode=Markdown`)
-            .then(() => { points -= amt; updatePoints(0); alert("Request Sent to Admin!"); closeModal('withdraw-modal'); });
+            .then(() => { points -= amt; updateUI(); alert("Sent to Admin!"); closeModal('withdraw-modal'); });
         }
 
         function claimDaily() {
             let today = new Date().toDateString();
             if(localStorage.getItem('lastDaily') === today) return alert("Already claimed!");
-            updatePoints(50); localStorage.setItem('lastDaily', today);
+            points += 50; updateUI(); localStorage.setItem('lastDaily', today);
         }
 
+        function updateUI() { localStorage.setItem('userPoints', points); document.getElementById('points').innerText = points.toLocaleString(); }
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         let totalUsers = parseInt(localStorage.getItem('total_user_count')) || 0;
         if (!localStorage.getItem('user_registered')) { totalUsers += 1; localStorage.setItem('total_user_count', totalUsers); localStorage.setItem('user_registered', 'true'); }
-        document.getElementById('user-count').innerText = totalUsers.toLocaleString();
-    </script>
-</body>
-</html>
+        document.getElementById('user
