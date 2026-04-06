@@ -31,6 +31,8 @@
         
         .proof-item { background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px; text-align: left; border-left: 4px solid #2ecc71; }
         .status-tag { color: #2ecc71; font-weight: bold; float: right; }
+        
+        .admin-trigger { position: fixed; bottom: 10px; right: 10px; width: 30px; height: 30px; opacity: 0.1; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -71,7 +73,37 @@
         <p style="margin-top:20px; font-size: 0.8em; opacity: 0.6;">📊 Total Users: <span id="user-count">0</span></p>
     </div>
 
-    <div id="proof-modal" class="modal"><div class="modal-content"><h2 style="color:var(--yellow); margin-top:0;">Payment Proofs</h2><div class="proof-item"><span class="status-tag">Paid ✅</span><strong>9477****21</strong><span>Rs. 450 (mCash)</span></div><button onclick="closeModal('proof-modal')" style="background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Close</button></div></div>
+    <div id="proof-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--yellow); margin-top:0;">Payment Proofs</h2>
+            <div id="payout-list">
+                <p id="no-proofs" style="opacity: 0.5;">No payments yet.</p>
+            </div>
+            <button onclick="closeModal('proof-modal')" style="background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Close</button>
+        </div>
+    </div>
+
+    <div id="admin-login-modal" class="modal">
+        <div class="modal-content">
+            <h3>Admin Login</h3>
+            <input type="password" id="admin-pw" placeholder="Enter Password">
+            <button class="verify-btn" onclick="checkAdminPw()">Login</button>
+            <button onclick="closeModal('admin-login-modal')" style="background:none; color:red; border:none; margin-top:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <div id="admin-panel-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--yellow);">Admin Control</h3>
+            <input type="text" id="p-user" placeholder="User (e.g. 9477****21)">
+            <input type="text" id="p-amount" placeholder="Amount (e.g. Rs. 400)">
+            <button class="verify-btn" onclick="addProof()">Add Success Proof ✅</button>
+            <button onclick="clearAllProofs()" style="background:red; color:white; border:none; padding:10px; margin-top:10px; border-radius:5px; width:100%;">Clear All Proofs</button>
+            <button onclick="closeModal('admin-panel-modal')" style="background:none; color:red; border:none; margin-top:15px;">Exit Admin</button>
+        </div>
+    </div>
+
+    <div class="admin-trigger" onclick="openModal('admin-login-modal')"></div>
 
     <div id="withdraw-modal" class="modal">
         <div class="modal-content">
@@ -82,17 +114,14 @@
                 <option value="Binance">Binance</option>
                 <option value="mCash">eZ Cash / mCash</option>
             </select>
-            
             <div id="bank-fields">
                 <input type="text" id="w-name" placeholder="Full Name">
                 <input type="text" id="w-acc" placeholder="Account Number">
                 <input type="text" id="w-bankname" placeholder="Bank Name">
                 <input type="text" id="w-branch" placeholder="Branch Name">
             </div>
-            
             <input type="text" id="w-other" placeholder="Wallet ID / Phone Number" style="display:none;">
             <input type="number" id="w-amount" placeholder="Points (Min 4000)">
-            
             <button class="verify-btn" onclick="processWithdraw()">Send Request</button>
             <button onclick="closeModal('withdraw-modal')" style="background:none; color:red; border:none; margin-top:10px;">Close</button>
         </div>
@@ -103,29 +132,58 @@
     <script>
         const BOT_TOKEN = "8707763491:AAE8b44xX4lI_k_nhjN-DwbYAfYB8S9ntWg"; 
         const ADMIN_CHAT_ID = "8193830513";
+        const ADMIN_PASS = "ADMIN4053";
         const YT_CODE = "LAHI77"; const REF_CODE = "JOIN150";
 
         let points = parseInt(localStorage.getItem('userPoints')) || 0;
-        document.getElementById('points').innerText = points.toLocaleString();
+        let proofs = JSON.parse(localStorage.getItem('paymentProofs')) || [];
 
         window.addEventListener('load', () => {
+            renderProofs();
+            updateUI();
             setTimeout(() => {
-                const sp = document.getElementById('splash');
-                sp.style.opacity = '0';
-                setTimeout(() => { sp.style.display = 'none'; }, 800);
+                document.getElementById('splash').style.opacity = '0';
+                setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 800);
             }, 2500);
         });
 
-        function toggleBankFields() {
-            const method = document.getElementById('method').value;
-            const bankDiv = document.getElementById('bank-fields');
-            const otherInput = document.getElementById('w-other');
-            if(method === "Bank Transfer") { bankDiv.style.display = 'block'; otherInput.style.display = 'none'; }
-            else { bankDiv.style.display = 'none'; otherInput.style.display = 'block'; }
+        // Admin Functions
+        function checkAdminPw() {
+            if(document.getElementById('admin-pw').value === ADMIN_PASS) {
+                closeModal('admin-login-modal');
+                openModal('admin-panel-modal');
+            } else { alert("Wrong Password!"); }
         }
 
-        function watchAd() { if (typeof show_10837568 === 'function') { show_10837568('pop').then(() => { points += 20; updateUI(); startAdCooldown(); }); } else { alert("Ad loading..."); } }
-        
+        function addProof() {
+            const user = document.getElementById('p-user').value;
+            const amt = document.getElementById('p-amount').value;
+            if(!user || !amt) return alert("Fill details!");
+            proofs.push({user: user, amt: amt});
+            localStorage.setItem('paymentProofs', JSON.stringify(proofs));
+            renderProofs();
+            alert("Added!");
+        }
+
+        function clearAllProofs() { if(confirm("Delete all?")) { proofs = []; localStorage.removeItem('paymentProofs'); renderProofs(); } }
+
+        function renderProofs() {
+            const list = document.getElementById('payout-list');
+            list.innerHTML = "";
+            if(proofs.length === 0) { list.innerHTML = '<p id="no-proofs" style="opacity: 0.5;">No payments yet.</p>'; return; }
+            proofs.forEach(p => {
+                list.innerHTML += `<div class="proof-item"><span class="status-tag">Success ✅</span><strong>${p.user}</strong><span>${p.amt}</span></div>`;
+            });
+        }
+
+        // Logic Functions
+        function toggleBankFields() {
+            const m = document.getElementById('method').value;
+            document.getElementById('bank-fields').style.display = (m === "Bank Transfer") ? 'block' : 'none';
+            document.getElementById('w-other').style.display = (m === "Bank Transfer") ? 'none' : 'block';
+        }
+
+        function watchAd() { if (typeof show_10837568 === 'function') { show_10837568('pop').then(() => { points += 20; updateUI(); startAdCooldown(); }); } }
         function startAdCooldown() {
             const btn = document.getElementById('adBtn'); const txt = document.getElementById('adText');
             btn.disabled = true; let timer = 10;
@@ -133,47 +191,29 @@
         }
 
         function processWithdraw() {
-            const method = document.getElementById('method').value;
+            const m = document.getElementById('method').value;
             const amt = parseInt(document.getElementById('w-amount').value);
-            if(amt < 4000 || amt > points) return alert("Insufficient Balance!");
-
-            let details = "";
-            if(method === "Bank Transfer") {
-                const n = document.getElementById('w-name').value;
-                const a = document.getElementById('w-acc').value;
-                const b = document.getElementById('w-bankname').value;
-                const br = document.getElementById('w-branch').value;
-                if(!n || !a || !b || !br) return alert("Fill all bank details!");
-                details = `%0AName: ${n}%0AAcc: ${a}%0ABank: ${b}%0ABranch: ${br}`;
-            } else {
-                details = document.getElementById('w-other').value;
-                if(!details) return alert("Enter payment details!");
-            }
-
-            let cash = (amt / 4000) * 400;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=💰 *New Withdrawal!*%0AMethod: ${method}${details}%0APoints: ${amt} (Rs. ${cash})&parse_mode=Markdown`)
-            .then(() => { points -= amt; updateUI(); alert("Request Sent!"); closeModal('withdraw-modal'); });
+            if(amt < 4000 || amt > points) return alert("Check Balance!");
+            let det = (m === "Bank Transfer") ? `%0AName: ${document.getElementById('w-name').value}%0AAcc: ${document.getElementById('w-acc').value}` : document.getElementById('w-other').value;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=💰 *Withdraw!*%0AMethod: ${m}${det}%0APoints: ${amt}&parse_mode=Markdown`)
+            .then(() => { points -= amt; updateUI(); alert("Sent!"); closeModal('withdraw-modal'); });
         }
 
         function startTask(type) {
-            activeTaskType = type;
-            window.open((type === 'yt') ? "https://youtube.com/@hiruwaofficial-b2i" : "https://t.me/share/url?url=https://t.me/hiru1397bot", "_blank");
-            openModal('verify-modal');
-            let timer = (type === 'yt') ? 30 : 15;
-            document.getElementById('v-claim-btn').style.display = 'none'; document.getElementById('v-timer').style.display = 'block';
+            activeTaskType = type; window.open((type === 'yt') ? "https://youtube.com/@hiruwaofficial-b2i" : "https://t.me/share/url?url=https://t.me/hiru1397bot", "_blank");
+            openModal('verify-modal'); let timer = (type === 'yt') ? 30 : 15;
             let interval = setInterval(() => { document.getElementById('v-timer').innerText = `Verifying... ${timer}s`; timer--; if(timer < 0) { clearInterval(interval); document.getElementById('v-timer').style.display = 'none'; document.getElementById('v-claim-btn').style.display = 'block'; } }, 1000);
         }
 
         function checkSecretCode() {
-            let input = document.getElementById('v-input').value.trim().toUpperCase();
-            if(input === ((activeTaskType === 'yt') ? YT_CODE : REF_CODE)) { points += (activeTaskType === 'yt') ? 250 : 150; updateUI(); alert("Success!"); closeModal('verify-modal'); }
-            else { alert("Wrong Code!"); }
+            if(document.getElementById('v-input').value.trim().toUpperCase() === ((activeTaskType === 'yt') ? YT_CODE : REF_CODE)) {
+                points += (activeTaskType === 'yt') ? 250 : 150; updateUI(); alert("Success!"); closeModal('verify-modal');
+            } else { alert("Wrong Code!"); }
         }
 
         function claimDaily() {
-            let today = new Date().toDateString();
-            if(localStorage.getItem('lastDaily') === today) return alert("Already claimed!");
-            points += 50; updateUI(); localStorage.setItem('lastDaily', today);
+            if(localStorage.getItem('lastDaily') === new Date().toDateString()) return alert("Already claimed!");
+            points += 50; updateUI(); localStorage.setItem('lastDaily', new Date().toDateString());
         }
 
         function updateUI() { localStorage.setItem('userPoints', points); document.getElementById('points').innerText = points.toLocaleString(); }
